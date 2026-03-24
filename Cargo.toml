@@ -1,0 +1,34 @@
+[package]
+name = "prismatica"
+version = "0.0.1"
+edition = "2024"
+description = "260+ scientific colormaps as compile-time Rust constants"
+license = "GPL-3.0"
+repository = "https://github.com/AlbinSidas/prismatica"
+keywords = ["colormap", "scientific", "visualization", "perceptual", "data-viz"]
+categories = ["science", "visualization"]
+
+[features]
+default = ["core"]
+
+# Essential scientific colormaps: matplotlib + crameri
+# (the maps that Nature Communications and most journals recommend)
+core = ["matplotlib", "crameri"]
+
+# Individual collections
+matplotlib = []       # 8 maps: viridis, inferno, magma, plasma, cividis, twilight, mako, rocket
+crameri = []          # 35+ maps: batlow, berlin, roma, oslo, tokyo, hawaii, etc.
+cet = []              # 60+ maps: CET-L*, CET-D*, CET-C*, CET-R*
+cmocean = []          # 22 maps: thermal, haline, solar, ice, deep, etc.
+colorbrewer = []      # 35 palettes: Blues, RdBu, Set2, Spectral, etc.
+cmasher = []          # 30+ maps: ember, ocean, gothic, neon, etc.
+ncar = []             # 40+ maps: NCAR NCL geoscience
+cartocolors = []      # 15+ maps: CARTO cartographic
+moreland = []         # 6 maps: cool-warm, black-body, Kindlmann
+d3 = []               # d3-scale-chromatic maps
+
+# Everything
+all = [
+    "matplotlib", "crameri", "cet", "cmocean", "colorbrewer",
+    "cmasher", "ncar", "cartocolors", "moreland", "d3",
+]

@@ -1,0 +1,13 @@
+//! Crameri Scientific Colour Maps (batlow, berlin, roma, oslo, tokyo, hawaii, and 30+ more).
+//!
+//! Fabio Crameri's perceptually uniform, CVD-friendly, and
+//! order-able colormaps designed for geoscience and general
+//! scientific visualization. These are the maps that Nature
+//! Communications now mandates for data figures.
+//!
+//! License: MIT.
+//!
+//! Source: <https://zenodo.org/records/8409685>
+//!
+//! Citation: Crameri, F. (2018). Scientific colour maps. Zenodo.
+//! <https://doi.org/10.5281/zenodo.1243862>

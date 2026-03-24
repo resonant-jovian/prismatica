@@ -3,7 +3,7 @@
 //! 260+ perceptually uniform, colorblind-safe colormaps from:
 //! matplotlib, Crameri, CET, CMOcean, ColorBrewer, CMasher, NCAR, and more.
 //!
-//! ```ignore
+//! ```
 //! use prismatica::crameri::BATLOW;
 //! let color = BATLOW.eval(0.5);
 //! println!("RGB: ({}, {}, {})", color.r, color.g, color.b);

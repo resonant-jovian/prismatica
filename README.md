@@ -48,7 +48,7 @@
 
 ---
 
-## For Everyone **[Planned]**
+## For Everyone
 
 ### What are scientific colormaps?
 
@@ -112,7 +112,7 @@ Prismatica is the data layer. It answers one question: *given a colormap name an
 
 ---
 
-## For Researchers **[Planned]**
+## For Researchers
 
 ### The Color type
 
@@ -198,7 +198,7 @@ for i in 0..SET2.len() {
 | `d3` | varies | d3-scale-chromatic maps |
 | `all` | ~260+ | All collections |
 
-### Framework integrations **[Planned]**
+### Framework integrations
 
 | Feature flag | Framework | Conversion |
 |---|---|---|

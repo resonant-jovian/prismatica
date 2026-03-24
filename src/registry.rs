@@ -4,10 +4,10 @@
 //! runtime. Which colormaps are present depends on the enabled feature
 //! flags.
 
-use crate::{Colormap, ColormapKind};
+use crate::Colormap;
 
-#[cfg(feature = "alloc")]
-use alloc::vec::Vec;
+#[cfg(any(feature = "alloc", feature = "std"))]
+use {alloc::vec::Vec, crate::ColormapKind};
 
 /// Iterate over each enabled collection's ALL slice.
 ///

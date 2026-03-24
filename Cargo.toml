@@ -5,11 +5,15 @@ members = ["xtask"]
 name = "prismatica"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
 description = "260+ scientific colormaps as compile-time Rust constants"
-license = "GPL-3.0"
-repository = "https://github.com/AlbinSidas/prismatica"
+license = "GPL-3.0-only"
+repository = "https://github.com/resonant-jovian/prismatica"
+documentation = "https://docs.rs/prismatica"
+readme = "README.md"
 keywords = ["colormap", "scientific", "visualization", "perceptual", "data-viz"]
 categories = ["no-std", "science", "visualization"]
+exclude = ["data/", "xtask/"]
 
 [features]
 default = ["std", "core"]

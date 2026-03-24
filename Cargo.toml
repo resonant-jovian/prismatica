@@ -6,7 +6,7 @@ description = "260+ scientific colormaps as compile-time Rust constants"
 license = "GPL-3.0"
 repository = "https://github.com/AlbinSidas/prismatica"
 keywords = ["colormap", "scientific", "visualization", "perceptual", "data-viz"]
-categories = ["science", "visualization"]
+categories = ["no-std", "science", "visualization"]
 
 [features]
 default = ["core"]

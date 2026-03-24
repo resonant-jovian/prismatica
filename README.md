@@ -2,8 +2,16 @@
 
 **The universal compile-time scientific colormap library for Rust**
 
-[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.0.1-orange.svg)]()
+[![Crates.io](https://img.shields.io/crates/v/prismatica.svg)](https://crates.io/crates/prismatica)
+[![docs.rs](https://docs.rs/prismatica/badge.svg)](https://docs.rs/prismatica)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Support on thanks.dev](https://img.shields.io/badge/Support-thanks.dev-green)](https://thanks.dev/u/gh/resonant-jovian)
+
+[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml)
+[![Clippy](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml)
+
+> [!IMPORTANT]
+> Pre-0.1.0 — the API is unstable, features may be incomplete or change without notice, and it is not yet intended for general use.
 
 ---
 
@@ -338,11 +346,6 @@ To add a new collection:
 6. Add the collection to the `all` feature
 7. Update the registry in `registry.rs`
 
-### Companion projects
-
-- [**caustic**](https://github.com/AlbinSidas/caustic) -- A 6D Vlasov-Poisson solver framework for collisionless gravitational dynamics
-- [**phasma**](https://github.com/AlbinSidas/phasma) -- Terminal interface for the caustic Vlasov-Poisson solver
-
 ---
 
 ## Competitive positioning
@@ -367,6 +370,14 @@ To add a new collection:
 | **v1.0** | Stable API, upstream sync CI, WASM, benchmarks | ~260+ |
 
 ---
+
+## Minimum supported Rust version
+
+Rust edition 2024, targeting **stable Rust 1.85+**.
+
+## Support
+
+If chromata is useful to your projects, consider supporting development via [thanks.dev](https://thanks.dev/u/gh/resonant-jovian).
 
 ## License
 

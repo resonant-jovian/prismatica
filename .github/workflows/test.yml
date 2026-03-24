@@ -29,3 +29,11 @@ jobs:
       run: cargo build --release --verbose
     - name: Run all tests (release, sequential)
       run: cargo test --release --verbose -- --test-threads=1
+
+  no-std-check:
+    name: no_std compatibility
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check no_std builds
+      run: cargo check --no-default-features --features core

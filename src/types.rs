@@ -9,22 +9,52 @@ pub struct Color {
 impl Color {
     /// Create a new color from RGB components.
     pub const fn new(r: u8, g: u8, b: u8) -> Self {
-        todo!()
+        Self { r, g, b }
     }
 
     /// Create a color from a 24-bit hex value (e.g., `0xFF8800`).
     pub const fn from_hex(hex: u32) -> Self {
-        todo!()
+        Self {
+            r: ((hex >> 16) & 0xFF) as u8,
+            g: ((hex >> 8) & 0xFF) as u8,
+            b: (hex & 0xFF) as u8,
+        }
+    }
+
+    /// Serialize the color as a 24-bit hex value (e.g., `0xFF8800`).
+    pub const fn to_hex(self) -> u32 {
+        (self.r as u32) << 16 | (self.g as u32) << 8 | self.b as u32
     }
 
     /// Format the color as a CSS hex string (e.g., `"#ff8800"`).
-    pub fn to_css_hex(self) -> String {
-        todo!()
+    #[cfg(any(feature = "alloc", feature = "std"))]
+    pub fn to_css_hex(self) -> alloc::string::String {
+        alloc::format!("#{:02x}{:02x}{:02x}", self.r, self.g, self.b)
     }
 
     /// Convert to floating-point RGB in `[0.0, 1.0]`.
     pub const fn to_f32(self) -> (f32, f32, f32) {
-        todo!()
+        (
+            self.r as f32 / 255.0,
+            self.g as f32 / 255.0,
+            self.b as f32 / 255.0,
+        )
+    }
+
+    /// Relative luminance per WCAG 2.0.
+    pub fn luminance(self) -> f64 {
+        let r = srgb_to_linear(self.r as f64 / 255.0);
+        let g = srgb_to_linear(self.g as f64 / 255.0);
+        let b = srgb_to_linear(self.b as f64 / 255.0);
+        0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+
+    /// WCAG contrast ratio between two colors.
+    pub fn contrast_ratio(self, other: Color) -> f64 {
+        let l1 = self.luminance();
+        let l2 = other.luminance();
+        let (lighter, darker) = if l1 > l2 { (l1, l2) } else { (l2, l1) };
+        (lighter + 0.05) / (darker + 0.05)
     }
 
     /// Linear interpolation between two colors.
@@ -33,12 +63,29 @@ impl Color {
     /// sRGB space, matching the behavior of matplotlib, ParaView, and
     /// most scientific visualization tools.
     pub fn lerp(self, other: Color, t: f32) -> Color {
-        todo!()
+        let t = t.clamp(0.0, 1.0);
+        Color {
+            r: (self.r as f32 + (other.r as f32 - self.r as f32) * t) as u8,
+            g: (self.g as f32 + (other.g as f32 - self.g as f32) * t) as u8,
+            b: (self.b as f32 + (other.b as f32 - self.b as f32) * t) as u8,
+        }
+    }
+}
+
+fn srgb_to_linear(c: f64) -> f64 {
+    if c <= 0.03928 {
+        c / 12.92
+    } else {
+        libm::pow((c + 0.055) / 1.055, 2.4)
     }
 }
 
 /// The type/class of a colormap, following standard scientific nomenclature.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub enum ColormapKind {
     /// Low to high, single direction (e.g., viridis, batlow, blues).
     Sequential,
@@ -54,6 +101,10 @@ pub enum ColormapKind {
 
 /// Metadata about a colormap's scientific properties.
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct ColormapMeta {
     /// Human-readable name, e.g. `"batlow"`.
     pub name: &'static str,
@@ -94,29 +145,52 @@ impl Colormap {
     /// Values outside `[0, 1]` are clamped. Interpolation between
     /// LUT entries is linear in sRGB space.
     pub fn eval(&self, t: f32) -> Color {
-        todo!()
+        debug_assert!(!self.lut.is_empty(), "Colormap LUT must not be empty");
+        let t = t.clamp(0.0, 1.0);
+        let n = self.lut.len();
+        let scaled = t * (n - 1) as f32;
+        let idx = scaled as usize;
+        let frac = scaled - idx as f32;
+
+        if idx >= n - 1 {
+            let [r, g, b] = self.lut[n - 1];
+            return Color::new(r, g, b);
+        }
+
+        let [r0, g0, b0] = self.lut[idx];
+        let [r1, g1, b1] = self.lut[idx + 1];
+
+        Color::new(
+            (r0 as f32 + (r1 as f32 - r0 as f32) * frac) as u8,
+            (g0 as f32 + (g1 as f32 - g0 as f32) * frac) as u8,
+            (b0 as f32 + (b1 as f32 - b0 as f32) * frac) as u8,
+        )
     }
 
     /// Sample at a rational index: the `i`-th of `n` evenly-spaced values.
     ///
     /// Equivalent to `eval(i as f32 / (n - 1) as f32)` for `n > 1`.
     pub fn eval_rational(&self, i: usize, n: usize) -> Color {
-        todo!()
+        if n <= 1 {
+            return self.eval(0.0);
+        }
+        self.eval(i as f32 / (n - 1) as f32)
     }
 
     /// Return a reversed view of this colormap. Zero allocation.
     pub fn reversed(&self) -> ReversedColormap<'_> {
-        todo!()
+        ReversedColormap { inner: self }
     }
 
     /// Extract `n` evenly-spaced discrete colors from the colormap.
-    pub fn colors(&self, n: usize) -> Vec<Color> {
-        todo!()
+    #[cfg(any(feature = "alloc", feature = "std"))]
+    pub fn colors(&self, n: usize) -> alloc::vec::Vec<Color> {
+        (0..n).map(|i| self.eval_rational(i, n)).collect()
     }
 
     /// Return the raw LUT as a slice of `[r, g, b]` arrays.
     pub fn lut_raw(&self) -> &'static [[u8; 3]] {
-        todo!()
+        self.lut
     }
 }
 
@@ -128,7 +202,7 @@ pub struct ReversedColormap<'a> {
 impl ReversedColormap<'_> {
     /// Sample the reversed colormap at `t` (equivalent to `inner.eval(1 - t)`).
     pub fn eval(&self, t: f32) -> Color {
-        todo!()
+        self.inner.eval(1.0 - t)
     }
 }
 
@@ -145,21 +219,210 @@ pub struct DiscretePalette {
 impl DiscretePalette {
     /// Get the `i`-th color (wraps around if `i >= len()`).
     pub fn get(&self, i: usize) -> Color {
-        todo!()
+        let [r, g, b] = self.colors[i % self.colors.len()];
+        Color::new(r, g, b)
     }
 
     /// Number of distinct colors in the palette.
     pub fn len(&self) -> usize {
-        todo!()
+        self.colors.len()
     }
 
     /// Returns `true` if the palette contains no colors.
     pub fn is_empty(&self) -> bool {
-        todo!()
+        self.colors.is_empty()
     }
 
     /// All colors as a `Vec`.
-    pub fn all_colors(&self) -> Vec<Color> {
-        todo!()
+    #[cfg(any(feature = "alloc", feature = "std"))]
+    pub fn all_colors(&self) -> alloc::vec::Vec<Color> {
+        self.colors
+            .iter()
+            .map(|[r, g, b]| Color::new(*r, *g, *b))
+            .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn color_new() {
+        let c = Color::new(255, 128, 0);
+        assert_eq!(c.r, 255);
+        assert_eq!(c.g, 128);
+        assert_eq!(c.b, 0);
+    }
+
+    #[test]
+    fn color_from_hex() {
+        let c = Color::from_hex(0xFF8800);
+        assert_eq!(c, Color::new(255, 136, 0));
+    }
+
+    #[test]
+    fn color_to_f32() {
+        let c = Color::new(255, 0, 128);
+        let (r, g, b) = c.to_f32();
+        assert!((r - 1.0).abs() < 0.001);
+        assert!(g.abs() < 0.001);
+        assert!((b - 128.0 / 255.0).abs() < 0.001);
+    }
+
+    #[cfg(any(feature = "alloc", feature = "std"))]
+    #[test]
+    fn color_to_css_hex() {
+        let c = Color::new(255, 136, 0);
+        assert_eq!(c.to_css_hex(), "#ff8800");
+    }
+
+    #[test]
+    fn color_lerp_boundaries() {
+        let a = Color::new(0, 0, 0);
+        let b = Color::new(255, 255, 255);
+        assert_eq!(a.lerp(b, 0.0), a);
+        assert_eq!(a.lerp(b, 1.0), b);
+    }
+
+    #[test]
+    fn color_lerp_midpoint() {
+        let a = Color::new(0, 0, 0);
+        let b = Color::new(200, 100, 50);
+        let mid = a.lerp(b, 0.5);
+        assert_eq!(mid, Color::new(100, 50, 25));
+    }
+
+    #[test]
+    fn color_lerp_clamps() {
+        let a = Color::new(100, 100, 100);
+        let b = Color::new(200, 200, 200);
+        assert_eq!(a.lerp(b, -1.0), a);
+        assert_eq!(a.lerp(b, 2.0), b);
+    }
+
+    static TEST_LUT: [[u8; 3]; 3] = [[0, 0, 0], [128, 128, 128], [255, 255, 255]];
+
+    fn test_colormap() -> Colormap {
+        Colormap {
+            meta: ColormapMeta {
+                name: "test",
+                collection: "test",
+                author: "test",
+                kind: ColormapKind::Sequential,
+                perceptually_uniform: true,
+                cvd_friendly: true,
+                grayscale_safe: true,
+                lut_size: 3,
+                citation: "",
+            },
+            lut: &TEST_LUT,
+        }
+    }
+
+    #[test]
+    fn colormap_eval_boundaries() {
+        let cm = test_colormap();
+        assert_eq!(cm.eval(0.0), Color::new(0, 0, 0));
+        assert_eq!(cm.eval(1.0), Color::new(255, 255, 255));
+    }
+
+    #[test]
+    fn colormap_eval_clamps() {
+        let cm = test_colormap();
+        assert_eq!(cm.eval(-1.0), cm.eval(0.0));
+        assert_eq!(cm.eval(2.0), cm.eval(1.0));
+    }
+
+    #[test]
+    fn colormap_eval_midpoint() {
+        let cm = test_colormap();
+        let mid = cm.eval(0.5);
+        assert_eq!(mid, Color::new(128, 128, 128));
+    }
+
+    #[test]
+    fn colormap_reversed() {
+        let cm = test_colormap();
+        let rev = cm.reversed();
+        assert_eq!(rev.eval(0.0), cm.eval(1.0));
+        assert_eq!(rev.eval(1.0), cm.eval(0.0));
+    }
+
+    #[test]
+    fn colormap_eval_rational() {
+        let cm = test_colormap();
+        assert_eq!(cm.eval_rational(0, 3), cm.eval(0.0));
+        assert_eq!(cm.eval_rational(2, 3), cm.eval(1.0));
+    }
+
+    #[test]
+    fn colormap_lut_raw() {
+        let cm = test_colormap();
+        assert_eq!(cm.lut_raw().len(), 3);
+    }
+
+    static TEST_PALETTE_COLORS: [[u8; 3]; 3] = [[255, 0, 0], [0, 255, 0], [0, 0, 255]];
+
+    #[test]
+    fn discrete_palette_get() {
+        let p = DiscretePalette {
+            meta: ColormapMeta {
+                name: "test",
+                collection: "test",
+                author: "test",
+                kind: ColormapKind::Qualitative,
+                perceptually_uniform: false,
+                cvd_friendly: false,
+                grayscale_safe: false,
+                lut_size: 3,
+                citation: "",
+            },
+            colors: &TEST_PALETTE_COLORS,
+        };
+        assert_eq!(p.get(0), Color::new(255, 0, 0));
+        assert_eq!(p.get(1), Color::new(0, 255, 0));
+        assert_eq!(p.get(3), Color::new(255, 0, 0)); // wraps
+        assert_eq!(p.len(), 3);
+        assert!(!p.is_empty());
+    }
+
+    #[test]
+    fn color_to_hex_roundtrip() {
+        assert_eq!(Color::from_hex(0xFF8800).to_hex(), 0xFF8800);
+        assert_eq!(Color::new(0, 0, 0).to_hex(), 0x000000);
+        assert_eq!(Color::new(255, 255, 255).to_hex(), 0xFFFFFF);
+    }
+
+    #[test]
+    fn color_luminance_black_white() {
+        let black = Color::new(0, 0, 0).luminance();
+        let white = Color::new(255, 255, 255).luminance();
+        assert!(black < 0.01, "black luminance should be ~0, got {black}");
+        assert!(
+            (white - 1.0).abs() < 0.01,
+            "white luminance should be ~1, got {white}"
+        );
+    }
+
+    #[test]
+    fn color_contrast_ratio_bw() {
+        let ratio = Color::new(0, 0, 0).contrast_ratio(Color::new(255, 255, 255));
+        assert!(
+            (ratio - 21.0).abs() < 0.1,
+            "black/white contrast should be ~21, got {ratio}"
+        );
+    }
+
+    #[test]
+    fn color_contrast_ratio_symmetric() {
+        let a = Color::new(100, 50, 200);
+        let b = Color::new(200, 150, 50);
+        let ab = a.contrast_ratio(b);
+        let ba = b.contrast_ratio(a);
+        assert!(
+            (ab - ba).abs() < 0.001,
+            "contrast ratio should be symmetric"
+        );
     }
 }

@@ -1,6 +1,9 @@
+[workspace]
+members = ["xtask"]
+
 [package]
 name = "prismatica"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2024"
 description = "260+ scientific colormaps as compile-time Rust constants"
 license = "GPL-3.0"
@@ -9,7 +12,11 @@ keywords = ["colormap", "scientific", "visualization", "perceptual", "data-viz"]
 categories = ["no-std", "science", "visualization"]
 
 [features]
-default = ["core"]
+default = ["std", "core"]
+
+# Allocation support (enables to_css_hex, colors, all_colors)
+std = ["alloc"]
+alloc = []
 
 # Essential scientific colormaps: matplotlib + crameri
 # (the maps that Nature Communications and most journals recommend)
@@ -17,7 +24,7 @@ core = ["matplotlib", "crameri"]
 
 # Individual collections
 matplotlib = []       # 8 maps: viridis, inferno, magma, plasma, cividis, twilight, mako, rocket
-crameri = []          # 35+ maps: batlow, berlin, roma, oslo, tokyo, hawaii, etc.
+crameri = []          # 40 maps: batlow, berlin, roma, oslo, tokyo, hawaii, etc.
 cet = []              # 60+ maps: CET-L*, CET-D*, CET-C*, CET-R*
 cmocean = []          # 22 maps: thermal, haline, solar, ice, deep, etc.
 colorbrewer = []      # 35 palettes: Blues, RdBu, Set2, Spectral, etc.
@@ -32,3 +39,16 @@ all = [
     "matplotlib", "crameri", "cet", "cmocean", "colorbrewer",
     "cmasher", "ncar", "cartocolors", "moreland", "d3",
 ]
+
+# Framework integration (optional dependencies)
+egui-integration = ["dep:egui"]
+plotters-integration = ["dep:plotters"]
+image-integration = ["dep:image"]
+serde-support = ["dep:serde"]
+
+[dependencies]
+libm = "0.2"
+egui = { version = "0.33", optional = true, default-features = false }
+plotters = { version = "0.3", optional = true, default-features = false }
+image = { version = "0.25", optional = true, default-features = false }
+serde = { version = "1", optional = true, features = ["derive"] }

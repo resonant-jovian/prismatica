@@ -13,7 +13,7 @@
 //!
 //! | Feature | Colormaps | Description |
 //! |---------|-----------|-------------|
-//! | `core` (default) | ~43 | matplotlib + Crameri |
+//! | `core` (default) | ~48 | matplotlib + Crameri |
 //! | `cet` | +60 | Peter Kovesi's perceptually uniform maps |
 //! | `cmocean` | +22 | Oceanographic colormaps |
 //! | `colorbrewer` | +35 | Cynthia Brewer's cartographic palettes |
@@ -35,12 +35,28 @@
 //! - **Categorical data** (labels, classes):
 //!   ColorBrewer qualitative palettes: `SET2`, `DARK2`, `PAIRED`
 
+#![no_std]
+#![forbid(unsafe_code)]
+#![deny(clippy::unwrap_used)]
+
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
 mod types;
 pub use types::*;
 
 mod traits;
+pub use traits::*;
 
 mod registry;
+
+#[cfg(any(
+    feature = "egui-integration",
+    feature = "plotters-integration",
+    feature = "image-integration",
+    feature = "serde-support",
+))]
+mod integration;
 pub use registry::*;
 
 // -- Collection modules (feature-gated) --

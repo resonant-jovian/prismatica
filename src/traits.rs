@@ -1,9 +1,10 @@
 //! Framework conversion traits.
 //!
-//! This module will provide feature-gated conversions between prismatica
-//! types and popular Rust visualization frameworks:
-//!
-//! - `plotters-integration`: `Color` to `plotters::style::RGBColor`
-//! - `egui-integration`: `Color` to `egui::Color32`
-//! - `image-integration`: `Color` to `image::Rgb<u8>`
-//! - `serde-support`: Serialization for `ColormapMeta`
+//! Provides generic traits for converting prismatica types into
+//! framework-specific color types, gated behind optional features.
+
+/// Trait for converting a prismatica [`Color`](crate::Color) to a framework-specific color type.
+pub trait IntoFrameworkColor<T> {
+    /// Convert this color into the framework's color type.
+    fn into_framework_color(self) -> T;
+}

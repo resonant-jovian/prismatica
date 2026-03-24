@@ -11,7 +11,7 @@
 [![Clippy](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml)
 
 > [!IMPORTANT]
-> Pre-0.1.0 — the API is unstable, features may be incomplete or change without notice, and it is not yet intended for general use.
+> v0.1.0 — core types, registry, matplotlib (8 maps) and Crameri (40 maps) are implemented. The API may still change before v1.0.
 
 ---
 
@@ -19,10 +19,10 @@
 
 | Component | Status |
 |---|---|
-| Core types (`Color`, `Colormap`, `ColormapMeta`) | Stubs |
-| Registry (discovery, filtering) | Stubs |
-| matplotlib (8 maps) | Planned |
-| Crameri (35+ maps) | Planned |
+| Core types (`Color`, `Colormap`, `ColormapMeta`) | Done |
+| Registry (discovery, filtering) | Done |
+| matplotlib (8 maps) | Done |
+| Crameri (40 maps) | Done |
 | CET (60+ maps) | Planned |
 | CMOcean (22 maps) | Planned |
 | ColorBrewer (35 palettes) | Planned |
@@ -48,7 +48,7 @@
 
 ---
 
-## For Everyone **[Planned]**
+## For Everyone
 
 ### What are scientific colormaps?
 
@@ -64,7 +64,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.0.1"
+prismatica = "0.1.0"
 ```
 
 Use a colormap:
@@ -112,7 +112,7 @@ Prismatica is the data layer. It answers one question: *given a colormap name an
 
 ---
 
-## For Researchers **[Planned]**
+## For Researchers
 
 ### The Color type
 
@@ -198,7 +198,7 @@ for i in 0..SET2.len() {
 | `d3` | varies | d3-scale-chromatic maps |
 | `all` | ~260+ | All collections |
 
-### Framework integrations **[Planned]**
+### Framework integrations
 
 | Feature flag | Framework | Conversion |
 |---|---|---|
@@ -296,12 +296,12 @@ Each collection module will contain one `.rs` file per colormap, auto-generated 
 
 Colormaps are not written by hand. A two-stage pipeline generates all colormap source code:
 
-1. **Extraction** (Python): Downloads upstream data (CSV, JSON, `.m` files, Python packages) and normalizes to `data/{collection}/{name}.csv` (256 rows of `R,G,B` as uint8) plus `data/{collection}/{name}.json` (metadata).
+1. **Fetch** (`cargo xtask fetch`): Downloads upstream data (ZIP archives, Python source files) and normalizes to `data/{collection}/{name}.csv` (256 rows of `R,G,B` as uint8) plus `data/{collection}/{name}.json` (metadata).
 
-2. **Generation** (Python): Reads normalized CSV + JSON and emits Rust source files with `const` colormap definitions and `static` LUT arrays.
+2. **Generate** (`cargo xtask generate`): Reads normalized CSV + JSON and emits Rust source files with `const` colormap definitions and `static` LUT arrays.
 
 ```
-Upstream data → extraction script → data/*.csv + data/*.json → generator → src/{collection}/*.rs
+Upstream data → cargo xtask fetch → data/*.csv + data/*.json → cargo xtask generate → src/{collection}/*.rs
 ```
 
 ### Data sources
@@ -338,9 +338,9 @@ Upstream data → extraction script → data/*.csv + data/*.json → generator �
 
 To add a new collection:
 
-1. Write an extraction function in the Python extraction script that normalizes upstream data to 256x3 uint8 CSV + metadata JSON
-2. Run the extraction script to populate `data/{collection}/`
-3. Run the generator script to emit `src/{collection}/*.rs`
+1. Add a fetch function in `xtask/src/main.rs` that normalizes upstream data to 256x3 uint8 CSV + metadata JSON
+2. Run `cargo xtask fetch` to populate `data/{collection}/`
+3. Run `cargo xtask generate` to emit `src/{collection}/*.rs`
 4. Add a feature flag in `Cargo.toml`
 5. Add the `#[cfg(feature = "...")]` module declaration in `lib.rs`
 6. Add the collection to the `all` feature

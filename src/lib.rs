@@ -49,6 +49,7 @@ mod traits;
 pub use traits::*;
 
 mod registry;
+pub mod prelude;
 
 #[cfg(any(
     feature = "egui-integration",

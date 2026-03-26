@@ -134,6 +134,186 @@ mod crameri_tests {
     }
 }
 
+#[cfg(feature = "cet")]
+mod cet_tests {
+    use super::*;
+
+    #[test]
+    fn all_cet_luts_are_256() {
+        for cm in prismatica::cet::ALL {
+            assert_eq!(cm.lut.len(), 256, "CET map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn cet_collection_count() {
+        assert!(prismatica::cet::ALL.len() >= 56, "Expected >= 56 CET maps, got {}", prismatica::cet::ALL.len());
+    }
+
+    #[test]
+    fn cet_cyclic_maps_wrap() {
+        for cm in prismatica::cet::ALL {
+            if cm.meta.kind == ColormapKind::Cyclic {
+                let first = cm.lut[0];
+                let last = cm.lut[255];
+                let dr = (first[0] as i16 - last[0] as i16).unsigned_abs();
+                let dg = (first[1] as i16 - last[1] as i16).unsigned_abs();
+                let db = (first[2] as i16 - last[2] as i16).unsigned_abs();
+                assert!(
+                    dr <= 10 && dg <= 10 && db <= 10,
+                    "CET cyclic map '{}' doesn't wrap: first={:?}, last={:?}",
+                    cm.meta.name, first, last
+                );
+            }
+        }
+    }
+}
+
+#[cfg(feature = "cmocean")]
+mod cmocean_tests {
+    use super::*;
+
+    #[test]
+    fn all_cmocean_luts_are_256() {
+        for cm in prismatica::cmocean::ALL {
+            assert_eq!(cm.lut.len(), 256, "CMOcean map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn cmocean_collection_count() {
+        assert_eq!(prismatica::cmocean::ALL.len(), 22);
+    }
+
+    #[test]
+    fn cmocean_phase_is_cyclic() {
+        assert_eq!(prismatica::cmocean::PHASE.meta.kind, ColormapKind::Cyclic);
+    }
+
+    #[test]
+    fn cmocean_balance_is_diverging() {
+        assert_eq!(prismatica::cmocean::BALANCE.meta.kind, ColormapKind::Diverging);
+    }
+}
+
+#[cfg(feature = "moreland")]
+mod moreland_tests {
+    use super::*;
+
+    #[test]
+    fn all_moreland_luts_are_256() {
+        for cm in prismatica::moreland::ALL {
+            assert_eq!(cm.lut.len(), 256, "Moreland map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn moreland_collection_count() {
+        assert_eq!(prismatica::moreland::ALL.len(), 6);
+    }
+
+    #[test]
+    fn smooth_cool_warm_is_diverging() {
+        assert_eq!(prismatica::moreland::SMOOTH_COOL_WARM.meta.kind, ColormapKind::Diverging);
+    }
+}
+
+#[cfg(feature = "cmasher")]
+mod cmasher_tests {
+    use super::*;
+
+    #[test]
+    fn all_cmasher_luts_are_256() {
+        for cm in prismatica::cmasher::ALL {
+            assert_eq!(cm.lut.len(), 256, "CMasher map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn cmasher_collection_count() {
+        assert!(prismatica::cmasher::ALL.len() >= 30, "Expected >= 30 CMasher maps, got {}", prismatica::cmasher::ALL.len());
+    }
+
+    #[test]
+    fn cmasher_fusion_is_diverging() {
+        assert_eq!(prismatica::cmasher::FUSION.meta.kind, ColormapKind::Diverging);
+    }
+}
+
+#[cfg(feature = "colorbrewer")]
+mod colorbrewer_tests {
+    use super::*;
+
+    #[test]
+    fn all_colorbrewer_luts_are_256() {
+        for cm in prismatica::colorbrewer::ALL {
+            assert_eq!(cm.lut.len(), 256, "ColorBrewer map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn colorbrewer_collection_count() {
+        assert_eq!(prismatica::colorbrewer::ALL.len(), 35);
+    }
+
+    #[test]
+    fn colorbrewer_has_discrete_palettes() {
+        assert!(!prismatica::colorbrewer::ALL_DISCRETE.is_empty());
+        for p in prismatica::colorbrewer::ALL_DISCRETE {
+            assert!(
+                p.len() >= 3 && p.len() <= 12,
+                "palette '{}' has {} colors, expected 3-12",
+                p.meta.name, p.len()
+            );
+        }
+    }
+
+    #[test]
+    fn colorbrewer_qualitative_exists() {
+        let has_qual = prismatica::colorbrewer::ALL
+            .iter()
+            .any(|cm| cm.meta.kind == ColormapKind::Qualitative);
+        assert!(has_qual);
+    }
+}
+
+#[cfg(feature = "cartocolors")]
+mod cartocolors_tests {
+    use super::*;
+
+    #[test]
+    fn all_cartocolors_luts_are_256() {
+        for cm in prismatica::cartocolors::ALL {
+            assert_eq!(cm.lut.len(), 256, "CartoColors map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn cartocolors_collection_count() {
+        assert!(prismatica::cartocolors::ALL.len() >= 30);
+    }
+
+    #[test]
+    fn cartocolors_has_discrete_palettes() {
+        assert!(!prismatica::cartocolors::ALL_DISCRETE.is_empty());
+    }
+}
+
+#[cfg(feature = "ncar")]
+mod ncar_tests {
+    #[test]
+    fn all_ncar_luts_are_256() {
+        for cm in prismatica::ncar::ALL {
+            assert_eq!(cm.lut.len(), 256, "NCAR map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn ncar_collection_count() {
+        assert!(prismatica::ncar::ALL.len() >= 20);
+    }
+}
+
 #[cfg(all(feature = "matplotlib", feature = "crameri", feature = "std"))]
 mod registry_tests {
     use super::*;

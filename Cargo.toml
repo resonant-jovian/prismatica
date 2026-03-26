@@ -3,7 +3,7 @@ members = ["xtask"]
 
 [package]
 name = "prismatica"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.85"
 description = "260+ scientific colormaps as compile-time Rust constants"
@@ -51,8 +51,8 @@ image-integration = ["dep:image"]
 serde-support = ["dep:serde"]
 
 [dependencies]
-libm = "0.2"
-egui = { version = "0.33", optional = true, default-features = false }
-plotters = { version = "0.3", optional = true, default-features = false }
-image = { version = "0.25", optional = true, default-features = false }
-serde = { version = "1", optional = true, features = ["derive"] }
+libm = "0.2.16"
+egui = { version = "0.34.0", optional = true, default-features = false }
+plotters = { version = "0.3.7", optional = true, default-features = false }
+image = { version = "0.25.10", optional = true, default-features = false }
+serde = { version = "1.0.228", optional = true, features = ["derive"] }

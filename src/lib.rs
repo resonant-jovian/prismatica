@@ -1,7 +1,7 @@
 //! # Prismatica -- Scientific Colormaps for Rust
 //!
-//! 260+ perceptually uniform, colorblind-safe colormaps from:
-//! matplotlib, Crameri, CET, CMOcean, ColorBrewer, CMasher, NCAR, and more.
+//! 290 scientific colormaps + 70 discrete palettes from 10 collections:
+//! matplotlib, Crameri, CET, CMOcean, ColorBrewer, CMasher, NCAR, CartoColors, Moreland, and d3.
 //!
 //! ```
 //! use prismatica::crameri::BATLOW;
@@ -13,27 +13,27 @@
 //!
 //! | Feature | Colormaps | Description |
 //! |---------|-----------|-------------|
-//! | `core` (default) | ~48 | matplotlib + Crameri |
-//! | `cet` | +60 | Peter Kovesi's perceptually uniform maps |
+//! | `core` (default) | 48 | matplotlib (8) + Crameri (40) |
+//! | `cet` | +59 | Peter Kovesi's perceptually uniform maps |
 //! | `cmocean` | +22 | Oceanographic colormaps |
-//! | `colorbrewer` | +35 | Cynthia Brewer's cartographic palettes |
-//! | `cmasher` | +30 | Astrophysics colormaps |
-//! | `ncar` | +40 | NCAR NCL geoscience maps |
-//! | `cartocolors` | +15 | CARTO cartographic maps |
+//! | `colorbrewer` | +35 (+35 palettes) | Cynthia Brewer's cartographic palettes |
+//! | `cmasher` | +53 | Astrophysics colormaps |
+//! | `ncar` | +26 | NCAR NCL geoscience maps |
+//! | `cartocolors` | +34 (+34 palettes) | CARTO cartographic maps |
 //! | `moreland` | +6 | Cool-warm, black body, Kindlmann |
-//! | `d3` | varies | d3-scale-chromatic maps |
-//! | `all` | ~260+ | Everything |
+//! | `d3` | +7 (+1 palette) | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
+//! | `all` | 290 (+70 palettes) | Everything |
 //!
 //! ## Choosing a Colormap
 //!
 //! - **Sequential data** (temperature, elevation, concentration):
 //!   `batlow`, `viridis`, `oslo`, `thermal`
 //! - **Diverging data** (anomalies, residuals):
-//!   `berlin`, `vik`, `balance`, `cool_warm`
+//!   `berlin`, `vik`, `balance`, `smooth-cool-warm`
 //! - **Cyclic data** (phase, direction, time-of-day):
 //!   `romaO`, `phase`, `twilight`
 //! - **Categorical data** (labels, classes):
-//!   ColorBrewer qualitative palettes: `SET2`, `DARK2`, `PAIRED`
+//!   `SET2`, `DARK2`, `PAIRED`, `Tableau10`
 
 #![no_std]
 #![forbid(unsafe_code)]

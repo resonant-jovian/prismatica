@@ -1,5 +1,6 @@
 mod colorbrewer;
 mod cartocolors;
+mod d3;
 
 use crate::codegen;
 use std::path::Path;
@@ -32,6 +33,7 @@ pub fn generate_all(project_root: &Path) {
     // Custom generators for collections with discrete palettes
     colorbrewer::generate(project_root);
     cartocolors::generate(project_root);
+    d3::generate(project_root);
 
     println!("Generate complete.");
 }
@@ -45,6 +47,10 @@ pub fn generate_collection(project_root: &Path, name: &str) {
         }
         "cartocolors" => {
             cartocolors::generate(project_root);
+            println!("Generate complete.");
+        }
+        "d3" => {
+            d3::generate(project_root);
             println!("Generate complete.");
         }
         _ => {

@@ -314,6 +314,38 @@ mod ncar_tests {
     }
 }
 
+#[cfg(feature = "d3")]
+mod d3_tests {
+    use super::*;
+
+    #[test]
+    fn all_d3_luts_are_256() {
+        for cm in prismatica::d3::ALL {
+            assert_eq!(cm.lut.len(), 256, "d3 map '{}' has {} entries", cm.meta.name, cm.lut.len());
+        }
+    }
+
+    #[test]
+    fn d3_collection_count() {
+        assert_eq!(prismatica::d3::ALL.len(), 7);
+    }
+
+    #[test]
+    fn d3_sinebow_is_cyclic() {
+        assert_eq!(prismatica::d3::SINEBOW.meta.kind, ColormapKind::Cyclic);
+    }
+
+    #[test]
+    fn d3_rainbow_is_cyclic() {
+        assert_eq!(prismatica::d3::RAINBOW.meta.kind, ColormapKind::Cyclic);
+    }
+
+    #[test]
+    fn d3_tableau10_palette_has_10_colors() {
+        assert_eq!(prismatica::d3::TABLEAU10_PALETTE.len(), 10);
+    }
+}
+
 #[cfg(all(feature = "matplotlib", feature = "crameri", feature = "std"))]
 mod registry_tests {
     use super::*;
@@ -365,5 +397,69 @@ mod registry_tests {
         for cm in &crameri {
             assert_eq!(cm.meta.collection, "crameri");
         }
+    }
+}
+
+#[cfg(all(feature = "all", feature = "std"))]
+mod full_registry_tests {
+    use prismatica::*;
+
+    #[test]
+    fn total_colormap_count() {
+        let all = all_colormaps();
+        assert!(
+            all.len() >= 200,
+            "Expected 200+ colormaps, got {}",
+            all.len()
+        );
+    }
+
+    #[test]
+    fn no_duplicate_names_across_collections() {
+        let all = all_colormaps();
+        let mut names: Vec<&str> = all.iter().map(|cm| cm.meta.name).collect();
+        names.sort();
+        for pair in names.windows(2) {
+            assert_ne!(pair[0], pair[1], "Duplicate: '{}'", pair[0]);
+        }
+    }
+
+    #[test]
+    fn all_collections_represented() {
+        let all = all_colormaps();
+        for expected in &[
+            "matplotlib", "crameri", "cet", "cmocean", "moreland",
+            "cmasher", "colorbrewer", "cartocolors", "ncar", "d3",
+        ] {
+            assert!(
+                all.iter().any(|cm| cm.meta.collection == *expected),
+                "Missing collection: {}",
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn discrete_palettes_exist() {
+        let palettes = all_discrete_palettes();
+        assert!(
+            !palettes.is_empty(),
+            "Expected discrete palettes"
+        );
+        // Should have at least ColorBrewer (35) + CartoColors (34) + d3 (1)
+        assert!(
+            palettes.len() >= 60,
+            "Expected >= 60 palettes, got {}",
+            palettes.len()
+        );
+    }
+
+    #[test]
+    fn find_palette_by_name_works() {
+        // ColorBrewer
+        assert!(find_palette_by_name("Blues").is_some());
+        // d3
+        assert!(find_palette_by_name("Tableau10").is_some());
+        assert!(find_palette_by_name("nonexistent").is_none());
     }
 }

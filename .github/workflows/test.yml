@@ -30,10 +30,31 @@ jobs:
     - name: Run all tests (release, sequential)
       run: cargo test --release --verbose -- --test-threads=1
 
+  all-features-test:
+    name: All features test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Test with all features
+      run: cargo test --all-features --verbose -- --test-threads=1
+
   no-std-check:
     name: no_std compatibility
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Check no_std builds
+    - name: Check no_std with core features
       run: cargo check --no-default-features --features core
+    - name: Check no_std with individual features
+      run: |
+        cargo check --no-default-features --features matplotlib
+        cargo check --no-default-features --features crameri
+        cargo check --no-default-features --features cet
+        cargo check --no-default-features --features cmocean
+        cargo check --no-default-features --features moreland
+        cargo check --no-default-features --features cmasher
+        cargo check --no-default-features --features colorbrewer
+        cargo check --no-default-features --features cartocolors
+        cargo check --no-default-features --features ncar
+        cargo check --no-default-features --features d3
+        cargo check --no-default-features --features all

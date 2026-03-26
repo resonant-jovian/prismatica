@@ -4,6 +4,7 @@ pub mod cmasher;
 pub mod cmocean;
 pub mod colorbrewer;
 pub mod crameri;
+pub mod d3;
 pub mod matplotlib;
 pub mod moreland;
 pub mod ncar;
@@ -20,6 +21,7 @@ pub fn fetch_all(project_root: &Path) {
     colorbrewer::fetch(project_root);
     cartocolors::fetch(project_root);
     ncar::fetch(project_root);
+    d3::fetch(project_root);
     println!("Fetch complete.");
 }
 
@@ -34,6 +36,7 @@ pub fn fetch_collection(project_root: &Path, name: &str) {
         "colorbrewer" => colorbrewer::fetch(project_root),
         "cartocolors" => cartocolors::fetch(project_root),
         "ncar" => ncar::fetch(project_root),
+        "d3" => d3::fetch(project_root),
         "all" => fetch_all(project_root),
         other => {
             eprintln!("Unknown collection: {other}");

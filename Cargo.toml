@@ -26,17 +26,17 @@ alloc = []
 # (the maps that Nature Communications and most journals recommend)
 core = ["matplotlib", "crameri"]
 
-# Individual collections
+# Individual collections (290 colormaps + 70 discrete palettes total)
 matplotlib = []       # 8 maps: viridis, inferno, magma, plasma, cividis, twilight, mako, rocket
 crameri = []          # 40 maps: batlow, berlin, roma, oslo, tokyo, hawaii, etc.
-cet = []              # 60+ maps: CET-L*, CET-D*, CET-C*, CET-R*
-cmocean = []          # 22 maps: thermal, haline, solar, ice, deep, etc.
-colorbrewer = []      # 35 palettes: Blues, RdBu, Set2, Spectral, etc.
-cmasher = []          # 30+ maps: ember, ocean, gothic, neon, etc.
-ncar = []             # 40+ maps: NCAR NCL geoscience
-cartocolors = []      # 15+ maps: CARTO cartographic
-moreland = []         # 6 maps: cool-warm, black-body, Kindlmann
-d3 = []               # d3-scale-chromatic maps
+cet = []              # 59 maps: CET-L*, CET-D*, CET-C*, CET-R*, CET-I*, CET-CB*
+cmocean = []          # 22 maps: thermal, haline, solar, ice, deep, balance, etc.
+colorbrewer = []      # 35 maps + 35 palettes: Blues, RdBu, Set2, Spectral, etc.
+cmasher = []          # 53 maps: ember, ocean, gothic, neon, fusion, etc.
+ncar = []             # 26 maps: NCAR NCL geoscience colormaps
+cartocolors = []      # 34 maps + 34 palettes: Burg, Mint, Bold, Vivid, etc.
+moreland = []         # 6 maps: cool-warm, black-body, Kindlmann, fast
+d3 = []               # 7 maps + 1 palette: Turbo, Rainbow, Sinebow, Tableau10, etc.
 
 # Everything
 all = [

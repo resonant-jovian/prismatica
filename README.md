@@ -10,6 +10,9 @@
 [![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
 [![MSRV](https://img.shields.io/badge/MSRV-1.85-blue.svg)]()
 
+> [!IMPORTANT]
+> Pre-1.0.0 — the API may change between minor versions. The API will be considered stable at 1.0.0.
+
 ---
 
 ## Status
@@ -64,7 +67,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "1.0.0"
+prismatica = "0.2.0"
 ```
 
 Use a colormap:

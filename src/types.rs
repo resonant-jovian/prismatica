@@ -6,13 +6,36 @@ pub struct Color {
     pub b: u8,
 }
 
+impl core::fmt::Display for Color {
+    /// Formats the color as a CSS hex string (e.g., `#ff8800`).
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "#{:02x}{:02x}{:02x}", self.r, self.g, self.b)
+    }
+}
+
 impl Color {
     /// Create a new color from RGB components.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let orange = Color::new(255, 165, 0);
+    /// assert_eq!(orange.r, 255);
+    /// ```
     pub const fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
     }
 
     /// Create a color from a 24-bit hex value (e.g., `0xFF8800`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let orange = Color::from_hex(0xFF8800);
+    /// assert_eq!(orange, Color::new(255, 136, 0));
+    /// ```
     pub const fn from_hex(hex: u32) -> Self {
         Self {
             r: ((hex >> 16) & 0xFF) as u8,
@@ -42,6 +65,16 @@ impl Color {
     }
 
     /// Relative luminance per WCAG 2.0.
+    ///
+    /// Returns a value in `[0.0, 1.0]` where 0 is black and 1 is white.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let white = Color::new(255, 255, 255);
+    /// assert!((white.luminance() - 1.0).abs() < 0.01);
+    /// ```
     pub fn luminance(self) -> f64 {
         let r = srgb_to_linear(self.r as f64 / 255.0);
         let g = srgb_to_linear(self.g as f64 / 255.0);
@@ -50,6 +83,17 @@ impl Color {
     }
 
     /// WCAG contrast ratio between two colors.
+    ///
+    /// Returns a value in `[1.0, 21.0]`. A ratio of 4.5+ meets WCAG AA
+    /// for normal text; 7.0+ meets AAA.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let ratio = Color::new(0, 0, 0).contrast_ratio(Color::new(255, 255, 255));
+    /// assert!((ratio - 21.0).abs() < 0.1);
+    /// ```
     pub fn contrast_ratio(self, other: Color) -> f64 {
         let l1 = self.luminance();
         let l2 = other.luminance();
@@ -99,6 +143,18 @@ pub enum ColormapKind {
     MultiSequential,
 }
 
+impl core::fmt::Display for ColormapKind {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Sequential => write!(f, "Sequential"),
+            Self::Diverging => write!(f, "Diverging"),
+            Self::Cyclic => write!(f, "Cyclic"),
+            Self::Qualitative => write!(f, "Qualitative"),
+            Self::MultiSequential => write!(f, "Multi-sequential"),
+        }
+    }
+}
+
 /// Metadata about a colormap's scientific properties.
 #[derive(Debug, Clone, Copy)]
 #[cfg_attr(
@@ -144,6 +200,14 @@ impl Colormap {
     ///
     /// Values outside `[0, 1]` are clamped. Interpolation between
     /// LUT entries is linear in sRGB space.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let color = BATLOW.eval(0.5);
+    /// assert!(color.r <= 255);
+    /// ```
     pub fn eval(&self, t: f32) -> Color {
         debug_assert!(!self.lut.is_empty(), "Colormap LUT must not be empty");
         let t = t.clamp(0.0, 1.0);
@@ -170,6 +234,14 @@ impl Colormap {
     /// Sample at a rational index: the `i`-th of `n` evenly-spaced values.
     ///
     /// Equivalent to `eval(i as f32 / (n - 1) as f32)` for `n > 1`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// // The 5th of 10 evenly-spaced samples
+    /// let color = BATLOW.eval_rational(5, 10);
+    /// ```
     pub fn eval_rational(&self, i: usize, n: usize) -> Color {
         if n <= 1 {
             return self.eval(0.0);
@@ -178,6 +250,14 @@ impl Colormap {
     }
 
     /// Return a reversed view of this colormap. Zero allocation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let rev = BATLOW.reversed();
+    /// assert_eq!(rev.eval(0.0), BATLOW.eval(1.0));
+    /// ```
     pub fn reversed(&self) -> ReversedColormap<'_> {
         ReversedColormap { inner: self }
     }
@@ -218,6 +298,15 @@ pub struct DiscretePalette {
 
 impl DiscretePalette {
     /// Get the `i`-th color (wraps around if `i >= len()`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// let first = SET2_PALETTE.get(0);
+    /// // Wraps around: index 8 == index 0 for an 8-color palette
+    /// assert_eq!(SET2_PALETTE.get(SET2_PALETTE.len()), first);
+    /// ```
     pub fn get(&self, i: usize) -> Color {
         let [r, g, b] = self.colors[i % self.colors.len()];
         Color::new(r, g, b)
@@ -246,6 +335,7 @@ impl DiscretePalette {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::format;
 
     #[test]
     fn color_new() {
@@ -385,6 +475,25 @@ mod tests {
         assert_eq!(p.get(3), Color::new(255, 0, 0)); // wraps
         assert_eq!(p.len(), 3);
         assert!(!p.is_empty());
+    }
+
+    #[test]
+    fn color_display() {
+        let c = Color::new(255, 136, 0);
+        assert_eq!(format!("{c}"), "#ff8800");
+        assert_eq!(format!("{}", Color::new(0, 0, 0)), "#000000");
+    }
+
+    #[test]
+    fn colormap_kind_display() {
+        assert_eq!(format!("{}", ColormapKind::Sequential), "Sequential");
+        assert_eq!(format!("{}", ColormapKind::Diverging), "Diverging");
+        assert_eq!(format!("{}", ColormapKind::Cyclic), "Cyclic");
+        assert_eq!(format!("{}", ColormapKind::Qualitative), "Qualitative");
+        assert_eq!(
+            format!("{}", ColormapKind::MultiSequential),
+            "Multi-sequential"
+        );
     }
 
     #[test]

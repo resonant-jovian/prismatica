@@ -1,12 +1,16 @@
 [workspace]
 members = ["xtask"]
 
+[workspace.lints.clippy]
+unwrap_used = "deny"
+all = { level = "warn", priority = -1 }
+
 [package]
 name = "prismatica"
 version = "0.2.0"
 edition = "2024"
 rust-version = "1.85"
-description = "260+ scientific colormaps as compile-time Rust constants"
+description = "290 scientific colormaps as compile-time Rust constants"
 license = "GPL-3.0-only"
 repository = "https://github.com/resonant-jovian/prismatica"
 documentation = "https://docs.rs/prismatica"
@@ -56,3 +60,10 @@ egui = { version = "0.34.0", optional = true, default-features = false }
 plotters = { version = "0.3.7", optional = true, default-features = false }
 image = { version = "0.25.10", optional = true, default-features = false }
 serde = { version = "1.0.228", optional = true, features = ["derive"] }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+insta = "1.42.2"
+proptest = "1.6.0"

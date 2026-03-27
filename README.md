@@ -7,8 +7,7 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support on thanks.dev](https://img.shields.io/badge/Support-thanks.dev-green)](https://thanks.dev/u/gh/resonant-jovian)
 
-[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml)
-[![Clippy](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml)
+[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
 
 > [!IMPORTANT]
 > v0.2.0 — 290 colormaps + 70 discrete palettes across 10 collections. All collections implemented. API may still change before v1.0.
@@ -334,7 +333,11 @@ cargo test                                         # All tests (unit + integrati
 cargo test --all-features                          # With all collections enabled
 cargo check --no-default-features --features core  # Verify no_std compatibility
 cargo clippy -- -W clippy::all                     # Lint
+cargo test --test property --features all          # Property-based tests (proptest)
+cargo test --test snapshots --features all         # Snapshot tests (insta)
 ```
+
+Snapshot tests use [insta](https://insta.rs/) to detect codegen changes. After modifying the code generation pipeline, run `cargo insta review` to inspect and accept updated snapshots.
 
 ### Code quality
 

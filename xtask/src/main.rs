@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 
+mod check;
+mod clean;
 mod codegen;
 mod fetch;
 mod generate;
@@ -25,6 +27,17 @@ enum Command {
     },
     /// Run fetch + generate for all collections
     All,
+    /// Remove fetched data and/or generated source files
+    Clean {
+        /// Remove only the data/.cache/ directory
+        #[arg(long)]
+        cache: bool,
+        /// Remove only auto-generated .rs files from src/
+        #[arg(long)]
+        generated: bool,
+    },
+    /// Check that generated source files are up to date
+    Check,
 }
 
 fn main() {
@@ -43,6 +56,18 @@ fn main() {
         Command::All => {
             fetch::fetch_collection(&root, "all");
             generate::generate_collection(&root, "all");
+        }
+        Command::Clean { cache, generated } => {
+            if let Err(e) = clean::run(&root, cache, generated) {
+                eprintln!("Error: {e:#}");
+                std::process::exit(1);
+            }
+        }
+        Command::Check => {
+            if let Err(e) = check::run(&root) {
+                eprintln!("Error: {e:#}");
+                std::process::exit(1);
+            }
         }
     }
 }

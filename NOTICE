@@ -1,0 +1,122 @@
+NOTICE
+
+Prismatica -- Scientific Colormaps for Rust
+Copyright (C) 2025 The Prismatica Authors
+Licensed under GPL-3.0-only
+
+This project bundles colormap data derived from multiple upstream sources.
+Each collection retains its original license and attribution requirements.
+The upstream licenses listed below apply to the colormap data only, not to
+the Prismatica source code itself.
+
+=========================================================================
+
+1. Matplotlib Colormaps
+
+   Authors:    Stefán van der Walt, Nathaniel Smith, Eric Firing
+   License:    CC0 1.0 (Public Domain)
+   Source:     https://github.com/matplotlib/matplotlib
+   Maps:       8 (viridis, inferno, magma, plasma, cividis, twilight,
+               mako, rocket)
+
+=========================================================================
+
+2. Crameri Scientific Colour Maps
+
+   Author:     Fabio Crameri
+   License:    MIT
+   Source:     https://zenodo.org/records/8409685
+   Maps:       40
+
+   Citation:
+     Crameri, F. (2018). Scientific colour maps. Zenodo.
+     doi:10.5281/zenodo.1243862
+
+=========================================================================
+
+3. CET Perceptually Uniform Colour Maps
+
+   Author:     Peter Kovesi
+   License:    CC-BY 4.0
+   Source:     https://colorcet.com/
+   Maps:       59
+
+   Citation:
+     Kovesi, P. (2015). Good Colour Maps: How to Design Them.
+     arXiv:1509.03700
+
+=========================================================================
+
+4. CMOcean
+
+   Author:     Kristen Thyng
+   License:    MIT
+   Source:     https://github.com/matplotlib/cmocean
+   Maps:       22
+
+   Citation:
+     Thyng, K. M. et al. (2016). True colors of oceanography.
+     Oceanography, 29(3), 10.
+
+=========================================================================
+
+5. ColorBrewer
+
+   Author:     Cynthia Brewer
+   License:    Apache-2.0 (code), attribution required (color data)
+   Source:     https://colorbrewer2.org/
+   Maps:       35 colormaps + 35 discrete palettes
+
+=========================================================================
+
+6. CMasher
+
+   Author:     Ellert van der Velden
+   License:    BSD-3-Clause
+   Source:     https://github.com/1313e/CMasher
+   Maps:       53
+
+   Citation:
+     van der Velden, E. (2020). CMasher: Scientific colormaps for making
+     accessible, informative and 'cmashing' plots. JOSS, 5(46), 2004.
+
+=========================================================================
+
+7. NCAR Command Language (NCL) Color Tables
+
+   Organization: National Center for Atmospheric Research (NCAR)
+   License:      Apache-2.0
+   Source:       https://github.com/NCAR/ncl
+   Maps:         26
+
+=========================================================================
+
+8. CartoColors
+
+   Organization: CARTO
+   License:      CC-BY-3.0
+   Source:       https://github.com/CartoDB/CartoColor
+   Maps:         34 colormaps + 34 discrete palettes
+
+=========================================================================
+
+9. Moreland Diverging Color Maps
+
+   Author:     Kenneth Moreland
+   License:    Public domain / BSD
+   Source:     https://www.kennethmoreland.com/color-advice/
+   Maps:       6
+
+=========================================================================
+
+10. d3-scale-chromatic
+
+   Author:     Mike Bostock / Observable
+   License:    ISC
+   Source:     https://github.com/d3/d3-scale-chromatic
+   Maps:       7 colormaps + 1 discrete palette
+
+=========================================================================
+
+For full license texts of each upstream project, consult the respective
+source repositories listed above.

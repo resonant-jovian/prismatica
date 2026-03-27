@@ -26,9 +26,10 @@ jobs:
       - name: Install system dependencies (Ubuntu)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev
-      # MSRV tests use only core features (integration deps like egui require newer Rust)
+      # MSRV: compile-check only (dev-deps like image may require newer rustc)
       - if: matrix.rust == '1.85.0'
-        run: cargo test --features all --verbose -- --test-threads=1
+        run: cargo check --features all --verbose
+      # Stable: full test suite with all features
       - if: matrix.rust != '1.85.0'
         run: cargo test --all-features --verbose -- --test-threads=1
 

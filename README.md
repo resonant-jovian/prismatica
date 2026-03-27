@@ -7,44 +7,44 @@
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Support on thanks.dev](https://img.shields.io/badge/Support-thanks.dev-green)](https://thanks.dev/u/gh/resonant-jovian)
 
-[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/test.yml)
-[![Clippy](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/clippy.yml)
-
-> [!IMPORTANT]
-> v0.1.0 — core types, registry, matplotlib (8 maps) and Crameri (40 maps) are implemented. The API may still change before v1.0.
+[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
+[![MSRV](https://img.shields.io/badge/MSRV-1.85-blue.svg)]()
 
 ---
 
 ## Status
 
-| Component | Status |
-|---|---|
-| Core types (`Color`, `Colormap`, `ColormapMeta`) | Done |
-| Registry (discovery, filtering) | Done |
-| matplotlib (8 maps) | Done |
-| Crameri (40 maps) | Done |
-| CET (60+ maps) | Planned |
-| CMOcean (22 maps) | Planned |
-| ColorBrewer (35 palettes) | Planned |
-| CMasher (30+ maps) | Planned |
-| NCAR NCL (40+ maps) | Planned |
-| CartoColors (15+ maps) | Planned |
-| Moreland (6 maps) | Planned |
-| d3 (d3-scale-chromatic) | Planned |
-| Framework integrations | Planned |
+| Component | Status | Count |
+|---|---|---|
+| Core types (`Color`, `Colormap`, `ColormapMeta`, `DiscretePalette`) | Done | |
+| Registry (discovery, filtering, palette lookup) | Done | |
+| Prelude module | Done | |
+| matplotlib | Done | 8 maps |
+| Crameri | Done | 40 maps |
+| CET | Done | 59 maps |
+| CMOcean | Done | 22 maps |
+| Moreland | Done | 6 maps |
+| CMasher | Done | 53 maps |
+| ColorBrewer | Done | 35 maps + 35 palettes |
+| CartoColors | Done | 34 maps + 34 palettes |
+| NCAR NCL | Done | 44 maps |
+| d3 | Done | 7 maps + 1 palette |
+| Framework integrations (egui, plotters, image, serde) | Done | |
+| **Total** | | **308 colormaps + 70 palettes** |
 
 ---
 
 ## Highlights
 
-- **260+ scientific colormaps** from 10+ established collections
+- **308 scientific colormaps** from 10 established collections
+- **70 discrete palettes** for categorical data (ColorBrewer, CartoColors, d3)
 - **Compile-time constants** -- zero runtime file I/O, zero parsing
-- **Zero dependencies** -- the core crate has no external dependencies
+- **`#![no_std]`** -- core functionality works without allocation
 - **Continuous sampling** -- linear interpolation between 256-step LUT entries for any `t` in `[0, 1]`
 - **Rich metadata** -- every colormap carries its kind, perceptual uniformity flag, CVD safety, and citation
 - **Feature-gated collections** -- include only the maps you need; ~1 KB per colormap
 - **Framework integrations** -- optional support for plotters, egui, image, and serde
-- **Broad coverage** -- matplotlib, Crameri, CET, CMOcean, ColorBrewer, CMasher, NCAR NCL, CartoColors, Moreland, d3
+- **Sibling project** -- [chromata](https://github.com/resonant-jovian/chromata) provides editor color themes with the same Color type and integration pattern
 
 ---
 
@@ -64,7 +64,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.1.0"
+prismatica = "1.0.0"
 ```
 
 Use a colormap:
@@ -78,28 +78,28 @@ println!("RGB: ({}, {}, {})", color.r, color.g, color.b);
 
 ### Supported collections
 
-| Collection | Author / Organization | Maps | Type |
-|---|---|---|---|
-| Matplotlib | van der Walt, Smith, Firing | 8 | Sequential, perceptually uniform |
-| Crameri | Fabio Crameri | 35+ | Sequential, diverging, multi-sequential, cyclic |
-| CET | Peter Kovesi | 60+ | Sequential, diverging, cyclic, rainbow, isoluminant |
-| CMOcean | Kristen Thyng | 22 | Oceanographic sequential, diverging |
-| ColorBrewer | Cynthia Brewer | 35 | Sequential, diverging, qualitative (discrete) |
-| CMasher | Ellert van der Velden | 30+ | Sequential, diverging (astrophysics) |
-| NCAR NCL | NCAR | 40+ | Geoscience sequential, diverging |
-| CartoColors | CARTO | 15+ | Cartographic sequential, diverging, qualitative |
-| Moreland | Kenneth Moreland | 6 | Cool-warm diverging, black body, Kindlmann |
-| d3 | Mike Bostock | varies | d3-scale-chromatic |
-| **Total** | | **~260+** | |
+| Collection | Author / Organization | Maps | Palettes | Type |
+|---|---|---|---|---|
+| Matplotlib | van der Walt, Smith, Firing | 8 | | Sequential, perceptually uniform |
+| Crameri | Fabio Crameri | 40 | | Sequential, diverging, multi-sequential, cyclic |
+| CET | Peter Kovesi | 59 | | Sequential, diverging, cyclic, rainbow, isoluminant |
+| CMOcean | Kristen Thyng | 22 | | Oceanographic sequential, diverging |
+| ColorBrewer | Cynthia Brewer | 35 | 35 | Sequential, diverging, qualitative |
+| CMasher | Ellert van der Velden | 53 | | Sequential, diverging (astrophysics) |
+| NCAR NCL | NCAR | 44 | | Geoscience sequential, diverging |
+| CartoColors | CARTO | 34 | 34 | Cartographic sequential, diverging, qualitative |
+| Moreland | Kenneth Moreland | 6 | | Cool-warm diverging, black body, Kindlmann |
+| d3 | Mike Bostock | 7 | 1 | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
+| **Total** | | **308** | **70** | |
 
 ### Choosing the right colormap
 
 | Data type | Recommended maps | Why |
 |---|---|---|
 | **Sequential** (temperature, elevation) | `batlow`, `viridis`, `oslo`, `thermal` | Monotonic luminance, perceptually uniform |
-| **Diverging** (anomalies, residuals) | `berlin`, `vik`, `balance`, `cool_warm` | Neutral center, symmetric extremes |
+| **Diverging** (anomalies, residuals) | `berlin`, `vik`, `balance`, `smooth-cool-warm` | Neutral center, symmetric extremes |
 | **Cyclic** (phase, direction, time-of-day) | `romaO`, `phase`, `twilight` | End color equals start color |
-| **Categorical** (labels, classes) | `SET2`, `DARK2`, `PAIRED` | Maximally distinct, non-interpolated |
+| **Categorical** (labels, classes) | `SET2`, `DARK2`, `PAIRED`, `Tableau10` | Maximally distinct, non-interpolated |
 
 ### What prismatica is not
 
@@ -124,7 +124,7 @@ pub struct Color {
 }
 ```
 
-Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`.
+Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`.
 
 ### Colormap sampling
 
@@ -150,7 +150,7 @@ Values outside `[0, 1]` are clamped. Interpolation is linear in sRGB space, matc
 ### Colormap discovery
 
 ```rust
-use prismatica::{ColormapKind, all_colormaps};
+use prismatica::{ColormapKind, all_colormaps, find_by_name, filter_by_collection};
 
 // Find all perceptually uniform diverging colormaps
 let diverging: Vec<_> = all_colormaps()
@@ -162,50 +162,53 @@ let diverging: Vec<_> = all_colormaps()
     .collect();
 
 // Look up by name
-let viridis = prismatica::find_by_name("viridis").unwrap();
+let viridis = find_by_name("viridis").unwrap();
 
 // Filter by collection
-let crameri_maps = prismatica::filter_by_collection("crameri");
+let crameri_maps = filter_by_collection("crameri");
 ```
 
 ### Discrete palettes
 
-ColorBrewer qualitative palettes provide distinct, non-interpolated colors for categorical data:
+ColorBrewer, CartoColors, and d3 provide discrete palettes alongside continuous colormaps:
 
 ```rust
-use prismatica::colorbrewer::qualitative::SET2;
+use prismatica::colorbrewer::SET2_PALETTE;
 
-for i in 0..SET2.len() {
-    let c = SET2.get(i);
-    println!("Category {}: {}", i, c.to_css_hex());
+for i in 0..SET2_PALETTE.len() {
+    let c = SET2_PALETTE.get(i);
+    println!("Category {}: #{:02x}{:02x}{:02x}", i, c.r, c.g, c.b);
 }
+
+// Also available via the registry
+let palette = prismatica::find_palette_by_name("Blues").unwrap();
 ```
 
 ### Feature flags
 
 | Feature | Maps | Description |
 |---|---|---|
-| `core` (default) | ~43 | matplotlib + Crameri -- the maps journals recommend |
+| `core` (default) | 48 | matplotlib + Crameri -- the maps journals recommend |
 | `matplotlib` | 8 | viridis, inferno, magma, plasma, cividis, twilight, mako, rocket |
-| `crameri` | 35+ | batlow, berlin, roma, oslo, tokyo, hawaii, and more |
-| `cet` | 60+ | CET-L*, CET-D*, CET-C*, CET-R* perceptually uniform maps |
+| `crameri` | 40 | batlow, berlin, roma, oslo, tokyo, hawaii, and more |
+| `cet` | 59 | CET-L*, CET-D*, CET-C*, CET-R* perceptually uniform maps |
 | `cmocean` | 22 | thermal, haline, solar, ice, deep, and 17 more |
-| `colorbrewer` | 35 | Blues, RdBu, Set2, Spectral, and more |
-| `cmasher` | 30+ | ember, ocean, gothic, neon, and more |
-| `ncar` | 40+ | NCAR NCL geoscience colour tables |
-| `cartocolors` | 15+ | CARTO cartographic colour schemes |
+| `colorbrewer` | 35 + 35 palettes | Blues, RdBu, Set2, Spectral, and more |
+| `cmasher` | 53 | ember, ocean, gothic, fusion, wildfire, and more |
+| `ncar` | 44 | NCAR NCL geoscience colour tables |
+| `cartocolors` | 34 + 34 palettes | CARTO cartographic colour schemes |
 | `moreland` | 6 | cool-warm, black body, Kindlmann, extended variants |
-| `d3` | varies | d3-scale-chromatic maps |
-| `all` | ~260+ | All collections |
+| `d3` | 7 + 1 palette | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
+| `all` | 308 + 70 palettes | All collections |
 
 ### Framework integrations
 
 | Feature flag | Framework | Conversion |
 |---|---|---|
-| `plotters-integration` | plotters | `Color` to `RGBColor`, palette closures |
+| `plotters-integration` | plotters | `Color` to `RGBColor` |
 | `egui-integration` | egui | `Color` to `Color32` |
 | `image-integration` | image | `Color` to `Rgb<u8>` |
-| `serde-support` | serde | Serialization for `ColormapMeta` |
+| `serde-support` | serde | Serialization for `ColormapMeta`, `ColormapKind` |
 
 ### Binary size
 
@@ -213,10 +216,10 @@ Each colormap is a 256x3 = 768-byte LUT plus ~200 bytes of metadata. Approximate
 
 | Feature | Maps | Size |
 |---|---|---|
-| `core` (default) | ~43 | ~43 KB |
-| `all` | ~260 | ~260 KB |
+| `core` (default) | 48 | ~48 KB |
+| `all` | 308 | ~308 KB |
 
-Even with all 260+ colormaps enabled, the total is smaller than a single PNG image.
+Even with all 308 colormaps enabled, the total is smaller than a single PNG image.
 
 ### Metadata
 
@@ -247,7 +250,7 @@ If you use prismatica in academic work, please cite the upstream colormap author
 
 ---
 
-## For Developers **[Stubs Available]**
+## For Developers
 
 ### Architecture
 
@@ -266,42 +269,31 @@ src/
 ├── lib.rs              # Crate-level docs, re-exports, feature gates
 ├── types.rs            # Color, Colormap, ColormapMeta, ColormapKind, DiscretePalette
 ├── traits.rs           # Framework conversion traits (feature-gated)
-├── registry.rs         # all_colormaps(), find_by_name(), filter functions
+├── registry.rs         # all_colormaps(), find_by_name(), filter functions, palette functions
+├── prelude.rs          # Convenience re-exports
 │
 ├── matplotlib/         # Feature: "matplotlib" — 8 maps
-│   └── mod.rs
-├── crameri/            # Feature: "crameri" — 35+ maps
-│   └── mod.rs
-├── cet/                # Feature: "cet" — 60+ maps
-│   └── mod.rs
+├── crameri/            # Feature: "crameri" — 40 maps
+├── cet/                # Feature: "cet" — 59 maps
 ├── cmocean/            # Feature: "cmocean" — 22 maps
-│   └── mod.rs
-├── colorbrewer/        # Feature: "colorbrewer" — 35 palettes
-│   └── mod.rs
-├── cmasher/            # Feature: "cmasher" — 30+ maps
-│   └── mod.rs
-├── ncar/               # Feature: "ncar" — 40+ maps
-│   └── mod.rs
-├── cartocolors/        # Feature: "cartocolors" — 15+ maps
-│   └── mod.rs
+├── colorbrewer/        # Feature: "colorbrewer" — 35 maps + 35 palettes
+├── cmasher/            # Feature: "cmasher" — 53 maps
+├── ncar/               # Feature: "ncar" — 44 maps
+├── cartocolors/        # Feature: "cartocolors" — 34 maps + 34 palettes
 ├── moreland/           # Feature: "moreland" — 6 maps
-│   └── mod.rs
-└── d3/                 # Feature: "d3"
-    └── mod.rs
+└── d3/                 # Feature: "d3" — 7 maps + 1 palette
 ```
-
-Each collection module will contain one `.rs` file per colormap, auto-generated from upstream LUT data.
 
 ### Code generation pipeline
 
 Colormaps are not written by hand. A two-stage pipeline generates all colormap source code:
 
-1. **Fetch** (`cargo xtask fetch`): Downloads upstream data (ZIP archives, Python source files) and normalizes to `data/{collection}/{name}.csv` (256 rows of `R,G,B` as uint8) plus `data/{collection}/{name}.json` (metadata).
+1. **Fetch** (`cargo xtask fetch [collection]`): Downloads upstream data and normalizes to `data/{collection}/{name}.csv` (256 rows of `R,G,B` as uint8) plus `data/{collection}/{name}.json` (metadata).
 
-2. **Generate** (`cargo xtask generate`): Reads normalized CSV + JSON and emits Rust source files with `const` colormap definitions and `static` LUT arrays.
+2. **Generate** (`cargo xtask generate [collection]`): Reads normalized CSV + JSON and emits Rust source files with `const` colormap definitions and `static` LUT arrays.
 
 ```
-Upstream data → cargo xtask fetch → data/*.csv + data/*.json → cargo xtask generate → src/{collection}/*.rs
+Upstream data -> cargo xtask fetch -> data/*.csv + data/*.json -> cargo xtask generate -> src/{collection}/*.rs
 ```
 
 ### Data sources
@@ -309,65 +301,60 @@ Upstream data → cargo xtask fetch → data/*.csv + data/*.json → cargo xtask
 | Collection | Source | Format | License |
 |---|---|---|---|
 | Crameri | [Zenodo](https://zenodo.org/records/8409685) | 256x3 CSV (floats 0-1) | MIT |
-| CET | [colorcet.com](https://colorcet.com/) | MATLAB `.m` or CSV | CC-BY |
-| CMOcean | [GitHub](https://github.com/matplotlib/cmocean) | Python/NumPy arrays | MIT |
-| ColorBrewer | [colorbrewer2.org](https://colorbrewer2.org/) | JSON (3-12 discrete steps) | Apache-2.0 |
-| Matplotlib | [BIDS/colormap](https://github.com/BIDS/colormap) | Python 256x3 float arrays | CC0 |
-| CMasher | [GitHub](https://github.com/1313e/CMasher) | `.txt` LUT files | BSD-3 |
-| Moreland | [kennethmoreland.com](https://www.kennethmoreland.com/color-advice/) | CSV | Public domain / BSD |
-| NCAR NCL | [ncl.ucar.edu](https://www.ncl.ucar.edu/Document/Graphics/color_table_gallery.shtml) | `.rgb` integer tables | Apache-2.0 |
-| CartoColors | [CARTO](https://carto.com/carto-colors/) | JSON | CC-BY-3.0 |
-
-### Testing strategy
-
-- **LUT integrity:** every LUT has exactly 256 entries with valid RGB values
-- **Perceptual monotonicity:** sequential + perceptually uniform maps have monotonic luminance
-- **Boundary clamping:** `eval(-1.0)` == `eval(0.0)`, `eval(2.0)` == `eval(1.0)`
-- **Reference values:** spot-checks against upstream data (e.g., `viridis(0.0)` == `(68, 1, 84)`)
-- **No duplicate names:** every colormap has a unique canonical name
-- **Snapshot tests:** catalog snapshot via `insta` to catch regressions
-
-### Code quality
-
-```rust
-#![forbid(warnings)]
-#![deny(clippy::unwrap_used)]
-```
+| CET | [colorcet.com](https://colorcet.com/) | CSV (floats 0-1) | CC-BY |
+| CMOcean | [GitHub](https://github.com/matplotlib/cmocean) | Space-separated float .txt | MIT |
+| ColorBrewer | [colorbrewer2.org](https://colorbrewer2.org/) | JSON (rgb() CSS strings) | Apache-2.0 |
+| Matplotlib | [GitHub](https://github.com/matplotlib/matplotlib) | Python 256x3 float arrays | CC0 |
+| CMasher | [GitHub](https://github.com/1313e/CMasher) | `.txt` LUT files (int/float) | BSD-3 |
+| Moreland | [kennethmoreland.com](https://www.kennethmoreland.com/color-advice/) | CSV (int 0-255) | Public domain / BSD |
+| NCAR NCL | [GitHub](https://github.com/NCAR/ncl) | `.rgb` integer tables | Apache-2.0 |
+| CartoColors | [GitHub](https://github.com/CartoDB/CartoColor) | TypeScript hex arrays | CC-BY-3.0 |
+| d3 | computed locally | Cubehelix/sinebow math | ISC |
 
 ### Adding new colormaps
 
 To add a new collection:
 
-1. Add a fetch function in `xtask/src/main.rs` that normalizes upstream data to 256x3 uint8 CSV + metadata JSON
-2. Run `cargo xtask fetch` to populate `data/{collection}/`
-3. Run `cargo xtask generate` to emit `src/{collection}/*.rs`
-4. Add a feature flag in `Cargo.toml`
-5. Add the `#[cfg(feature = "...")]` module declaration in `lib.rs`
-6. Add the collection to the `all` feature
-7. Update the registry in `registry.rs`
+1. Add a fetch module in `xtask/src/fetch/{collection}.rs`
+2. Register it in `xtask/src/fetch/mod.rs`
+3. Run `cargo xtask fetch {collection}` to populate `data/{collection}/`
+4. Add generate module (or use the generic path) in `xtask/src/generate/`
+5. Run `cargo xtask generate {collection}` to emit `src/{collection}/*.rs`
+6. Add a feature flag in `Cargo.toml` and add to the `all` feature
+7. Add `#[cfg(feature = "...")]` module declaration in `lib.rs`
+8. Add the collection to `for_each_colormap()` in `registry.rs`
+
+### Testing
+
+```bash
+cargo test                                         # All tests (unit + integration)
+cargo test --all-features                          # With all collections enabled
+cargo check --no-default-features --features core  # Verify no_std compatibility
+cargo clippy -- -W clippy::all                     # Lint
+cargo test --test property --features all          # Property-based tests (proptest)
+cargo test --test snapshots --features all         # Snapshot tests (insta)
+```
+
+Snapshot tests use [insta](https://insta.rs/) to detect codegen changes. After modifying the code generation pipeline, run `cargo insta review` to inspect and accept updated snapshots.
+
+### Code quality
+
+```rust
+#![no_std]
+#![forbid(unsafe_code)]
+#![deny(clippy::unwrap_used)]
+```
 
 ---
 
 ## Competitive positioning
 
-| Crate | Colormaps | LUT-based | Metadata | Collections | no_std |
+| Crate | Colormaps | LUT-based | Metadata | Collections | `no_std` |
 |---|---|---|---|---|---|
 | colorous | ~40 | Partial | None | d3 only | Yes |
 | colorgrad | ~40 | No (interpolated) | None | d3 + custom | No |
 | scarlet | ~5 | No (computed) | None | Basic only | No |
-| **prismatica** | **260+** | **Yes (256-step const)** | **Full** | **10+ collections** | **Planned** |
-
----
-
-## Roadmap
-
-| Version | Milestone | Maps |
-|---|---|---|
-| **v0.1** | Core types + matplotlib + Crameri | ~43 |
-| **v0.2** | CET + CMOcean + ColorBrewer | ~160 |
-| **v0.3** | CMasher + NCAR + CartoColors + Moreland | ~260+ |
-| **v0.4** | Framework integrations, serde, gallery generator | ~260+ |
-| **v1.0** | Stable API, upstream sync CI, WASM, benchmarks | ~260+ |
+| **prismatica** | **308** | **Yes (256-step const)** | **Full** | **10 collections** | **Yes** |
 
 ---
 
@@ -377,7 +364,7 @@ Rust edition 2024, targeting **stable Rust 1.85+**.
 
 ## Support
 
-If chromata is useful to your projects, consider supporting development via [thanks.dev](https://thanks.dev/u/gh/resonant-jovian).
+If prismatica is useful to your projects, consider supporting development via [thanks.dev](https://thanks.dev/u/gh/resonant-jovian).
 
 ## License
 

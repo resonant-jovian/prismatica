@@ -1,0 +1,18 @@
+---
+source: tests/snapshots.rs
+expression: summary
+---
+total_colormaps: 308
+total_palettes: 70
+
+collections:
+  matplotlib: 8
+  crameri: 40
+  cet: 59
+  cmocean: 22
+  colorbrewer: 35
+  cmasher: 53
+  ncar: 44
+  cartocolors: 34
+  moreland: 6
+  d3: 7

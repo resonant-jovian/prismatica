@@ -3,8 +3,7 @@ use std::collections::BTreeMap;
 use std::io::Read;
 use std::path::Path;
 
-const CET_ZIP_URL: &str =
-    "https://colorcet.com/download/CETperceptual_csv_0_1.zip";
+const CET_ZIP_URL: &str = "https://colorcet.com/download/CETperceptual_csv_0_1.zip";
 
 fn cet_kind(name: &str) -> &'static str {
     // Check CET-CB* before CET-C* to avoid misclassifying colorblind maps as Cyclic
@@ -115,9 +114,8 @@ pub fn fetch(project_root: &Path) {
             perceptually_uniform: true,
             cvd_friendly: cet_cvd_friendly(name),
             grayscale_safe: false,
-            citation:
-                "Kovesi, P. (2015). Good Colour Maps: How to Design Them. arXiv:1509.03700"
-                    .to_string(),
+            citation: "Kovesi, P. (2015). Good Colour Maps: How to Design Them. arXiv:1509.03700"
+                .to_string(),
         };
 
         codegen::write_csv(&data_dir.join(format!("{}.csv", name)), lut);

@@ -8,28 +8,116 @@ struct CmoceanMapDef {
 }
 
 const CMOCEAN_MAPS: &[CmoceanMapDef] = &[
-    CmoceanMapDef { name: "thermal",  kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "haline",   kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "solar",    kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "ice",      kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "gray",     kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "oxy",      kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "deep",     kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "dense",    kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "algae",    kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "matter",   kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "turbid",   kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "speed",    kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "amp",      kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "tempo",    kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "rain",     kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "phase",    kind: "Cyclic",     grayscale_safe: false },
-    CmoceanMapDef { name: "topo",     kind: "Sequential", grayscale_safe: true },
-    CmoceanMapDef { name: "balance",  kind: "Diverging",  grayscale_safe: false },
-    CmoceanMapDef { name: "delta",    kind: "Diverging",  grayscale_safe: false },
-    CmoceanMapDef { name: "curl",     kind: "Diverging",  grayscale_safe: false },
-    CmoceanMapDef { name: "diff",     kind: "Diverging",  grayscale_safe: false },
-    CmoceanMapDef { name: "tarn",     kind: "Diverging",  grayscale_safe: false },
+    CmoceanMapDef {
+        name: "thermal",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "haline",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "solar",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "ice",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "gray",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "oxy",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "deep",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "dense",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "algae",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "matter",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "turbid",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "speed",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "amp",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "tempo",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "rain",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "phase",
+        kind: "Cyclic",
+        grayscale_safe: false,
+    },
+    CmoceanMapDef {
+        name: "topo",
+        kind: "Sequential",
+        grayscale_safe: true,
+    },
+    CmoceanMapDef {
+        name: "balance",
+        kind: "Diverging",
+        grayscale_safe: false,
+    },
+    CmoceanMapDef {
+        name: "delta",
+        kind: "Diverging",
+        grayscale_safe: false,
+    },
+    CmoceanMapDef {
+        name: "curl",
+        kind: "Diverging",
+        grayscale_safe: false,
+    },
+    CmoceanMapDef {
+        name: "diff",
+        kind: "Diverging",
+        grayscale_safe: false,
+    },
+    CmoceanMapDef {
+        name: "tarn",
+        kind: "Diverging",
+        grayscale_safe: false,
+    },
 ];
 
 pub fn fetch(project_root: &Path) {
@@ -78,6 +166,9 @@ pub fn fetch(project_root: &Path) {
 
         codegen::write_csv(&data_dir.join(format!("{}.csv", def.name)), &lut);
         codegen::write_json(&data_dir.join(format!("{}.json", def.name)), &meta);
-        println!("  Wrote data/cmocean/{}.csv + .json ({})", def.name, def.kind);
+        println!(
+            "  Wrote data/cmocean/{}.csv + .json ({})",
+            def.name, def.kind
+        );
     }
 }

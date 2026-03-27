@@ -12,8 +12,8 @@ expression: header
 //! License: Apache-2.0.
 //!
 //! Source: <https://colorbrewer2.org/>
+//!
+//! This module provides 35 continuous colormaps (via [`ALL`]) and
+//! 35 discrete palettes (via [`ALL_DISCRETE`]).
 
 mod accent;
-pub use accent::ACCENT;
-mod blues;
-pub use blues::BLUES;

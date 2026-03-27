@@ -127,8 +127,8 @@ pub fn run(project_root: &Path, cache: bool, generated: bool) -> Result<()> {
 
 /// Check if a file starts with the auto-generated preamble.
 fn is_generated_file(path: &Path) -> Result<bool> {
-    let content = fs::read_to_string(path)
-        .with_context(|| format!("failed to read {}", path.display()))?;
+    let content =
+        fs::read_to_string(path).with_context(|| format!("failed to read {}", path.display()))?;
 
     Ok(content
         .lines()

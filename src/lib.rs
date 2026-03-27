@@ -1,6 +1,6 @@
 //! # Prismatica -- Scientific Colormaps for Rust
 //!
-//! 290 scientific colormaps + 70 discrete palettes from 10 collections:
+//! 308 scientific colormaps + 70 discrete palettes from 10 collections:
 //! matplotlib, Crameri, CET, CMOcean, ColorBrewer, CMasher, NCAR, CartoColors, Moreland, and d3.
 //!
 //! ```
@@ -18,11 +18,11 @@
 //! | `cmocean` | +22 | Oceanographic colormaps |
 //! | `colorbrewer` | +35 (+35 palettes) | Cynthia Brewer's cartographic palettes |
 //! | `cmasher` | +53 | Astrophysics colormaps |
-//! | `ncar` | +26 | NCAR NCL geoscience maps |
+//! | `ncar` | +44 | NCAR NCL geoscience maps |
 //! | `cartocolors` | +34 (+34 palettes) | CARTO cartographic maps |
 //! | `moreland` | +6 | Cool-warm, black body, Kindlmann |
 //! | `d3` | +7 (+1 palette) | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
-//! | `all` | 290 (+70 palettes) | Everything |
+//! | `all` | 308 (+70 palettes) | Everything |
 //!
 //! ## Choosing a Colormap
 //!
@@ -34,6 +34,10 @@
 //!   `romaO`, `phase`, `twilight`
 //! - **Categorical data** (labels, classes):
 //!   `SET2`, `DARK2`, `PAIRED`, `Tableau10`
+//!
+//! ## Minimum Supported Rust Version
+//!
+//! Prismatica requires Rust **1.85** or later (edition 2024).
 
 #![no_std]
 #![forbid(unsafe_code)]
@@ -48,8 +52,8 @@ pub use types::*;
 mod traits;
 pub use traits::*;
 
-mod registry;
 pub mod prelude;
+mod registry;
 
 #[cfg(any(
     feature = "egui-integration",

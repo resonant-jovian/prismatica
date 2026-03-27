@@ -80,26 +80,6 @@ pub use turbid::TURBID;
 
 /// All colormaps in the cmocean collection.
 pub static ALL: &[&crate::Colormap] = &[
-    &ALGAE,
-    &AMP,
-    &BALANCE,
-    &CURL,
-    &DEEP,
-    &DELTA,
-    &DENSE,
-    &DIFF,
-    &GRAY,
-    &HALINE,
-    &ICE,
-    &MATTER,
-    &OXY,
-    &PHASE,
-    &RAIN,
-    &SOLAR,
-    &SPEED,
-    &TARN,
-    &TEMPO,
-    &THERMAL,
-    &TOPO,
-    &TURBID,
+    &ALGAE, &AMP, &BALANCE, &CURL, &DEEP, &DELTA, &DENSE, &DIFF, &GRAY, &HALINE, &ICE, &MATTER,
+    &OXY, &PHASE, &RAIN, &SOLAR, &SPEED, &TARN, &TEMPO, &THERMAL, &TOPO, &TURBID,
 ];

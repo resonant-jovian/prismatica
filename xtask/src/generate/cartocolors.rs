@@ -5,7 +5,9 @@ use std::path::Path;
 pub fn generate(project_root: &Path) {
     let data_dir = project_root.join("data").join("cartocolors");
     if !data_dir.exists() {
-        eprintln!("Warning: data/cartocolors/ does not exist -- run `cargo xtask fetch cartocolors` first");
+        eprintln!(
+            "Warning: data/cartocolors/ does not exist -- run `cargo xtask fetch cartocolors` first"
+        );
         return;
     }
 
@@ -17,12 +19,7 @@ pub fn generate(project_root: &Path) {
     let mut json_files: Vec<_> = fs::read_dir(&data_dir)
         .expect("read data dir")
         .filter_map(|e| e.ok())
-        .filter(|e| {
-            e.path()
-                .extension()
-                .map(|x| x == "json")
-                .unwrap_or(false)
-        })
+        .filter(|e| e.path().extension().map(|x| x == "json").unwrap_or(false))
         .collect();
     json_files.sort_by_key(|e| e.file_name());
 
@@ -33,7 +30,7 @@ pub fn generate(project_root: &Path) {
         let json_path = entry.path();
         let stem = json_path
             .file_stem()
-            .unwrap()
+            .expect("JSON file should have a stem")
             .to_string_lossy()
             .to_string();
 
@@ -63,10 +60,7 @@ pub fn generate(project_root: &Path) {
         let code = codegen::generate_dual_colormap_rs(&map, &palette, &const_name);
         let rs_path = src_dir.join(format!("{mod_name}.rs"));
         fs::write(&rs_path, code).expect("write .rs");
-        println!(
-            "  Generating cartocolors/{mod_name}.rs ({})",
-            map.meta.kind
-        );
+        println!("  Generating cartocolors/{mod_name}.rs ({})", map.meta.kind);
 
         colormap_entries.push((map.meta.name.clone(), mod_name.clone(), const_name.clone()));
         palette_entries.push((map.meta.name.clone(), mod_name, const_name));

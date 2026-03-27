@@ -8,6 +8,9 @@
 //! License: Apache-2.0.
 //!
 //! Source: <https://colorbrewer2.org/>
+//!
+//! This module provides 35 continuous colormaps (via [`ALL`]) and
+//! 35 discrete palettes (via [`ALL_DISCRETE`]).
 
 mod accent;
 pub use accent::ACCENT;
@@ -78,7 +81,6 @@ pub use ylgnbu::YLGNBU;
 mod ylorbr;
 pub use ylorbr::YLORBR;
 mod ylorrd;
-pub use ylorrd::YLORRD;
 pub use accent::ACCENT_PALETTE;
 pub use blues::BLUES_PALETTE;
 pub use brbg::BRBG_PALETTE;
@@ -113,45 +115,14 @@ pub use spectral::SPECTRAL_PALETTE;
 pub use ylgn::YLGN_PALETTE;
 pub use ylgnbu::YLGNBU_PALETTE;
 pub use ylorbr::YLORBR_PALETTE;
+pub use ylorrd::YLORRD;
 pub use ylorrd::YLORRD_PALETTE;
 
 /// All colormaps in the colorbrewer collection.
 pub static ALL: &[&crate::Colormap] = &[
-    &ACCENT,
-    &BLUES,
-    &BRBG,
-    &BUGN,
-    &BUPU,
-    &DARK2,
-    &GNBU,
-    &GREENS,
-    &GREYS,
-    &ORANGES,
-    &ORRD,
-    &PAIRED,
-    &PASTEL1,
-    &PASTEL2,
-    &PIYG,
-    &PRGN,
-    &PUBU,
-    &PUBUGN,
-    &PUOR,
-    &PURD,
-    &PURPLES,
-    &RDBU,
-    &RDGY,
-    &RDPU,
-    &RDYLBU,
-    &RDYLGN,
-    &REDS,
-    &SET1,
-    &SET2,
-    &SET3,
-    &SPECTRAL,
-    &YLGN,
-    &YLGNBU,
-    &YLORBR,
-    &YLORRD,
+    &ACCENT, &BLUES, &BRBG, &BUGN, &BUPU, &DARK2, &GNBU, &GREENS, &GREYS, &ORANGES, &ORRD, &PAIRED,
+    &PASTEL1, &PASTEL2, &PIYG, &PRGN, &PUBU, &PUBUGN, &PUOR, &PURD, &PURPLES, &RDBU, &RDGY, &RDPU,
+    &RDYLBU, &RDYLGN, &REDS, &SET1, &SET2, &SET3, &SPECTRAL, &YLGN, &YLGNBU, &YLORBR, &YLORRD,
 ];
 
 /// All discrete palettes in the colorbrewer collection.

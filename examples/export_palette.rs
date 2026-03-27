@@ -8,12 +8,18 @@ fn main() {
     // Export a discrete palette (ColorBrewer Set2) as CSS hex
     println!("-- Discrete palette: ColorBrewer Set2 --");
     let palette = find_palette_by_name("Set2").expect("Set2 palette not found");
-    println!("  {} colors from \"{}\":\n", palette.len(), palette.meta.name);
+    println!(
+        "  {} colors from \"{}\":\n",
+        palette.len(),
+        palette.meta.name
+    );
     for i in 0..palette.len() {
         let c = palette.get(i);
         println!(
             "  \x1b[48;2;{};{};{}m    \x1b[0m  {}",
-            c.r, c.g, c.b,
+            c.r,
+            c.g,
+            c.b,
             c.to_css_hex(),
         );
     }
@@ -25,7 +31,9 @@ fn main() {
     for c in &colors {
         println!(
             "  \x1b[48;2;{};{};{}m    \x1b[0m  {}",
-            c.r, c.g, c.b,
+            c.r,
+            c.g,
+            c.b,
             c.to_css_hex(),
         );
     }

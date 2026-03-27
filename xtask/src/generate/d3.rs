@@ -17,12 +17,7 @@ pub fn generate(project_root: &Path) {
     let mut json_files: Vec<_> = fs::read_dir(&data_dir)
         .expect("read data dir")
         .filter_map(|e| e.ok())
-        .filter(|e| {
-            e.path()
-                .extension()
-                .map(|x| x == "json")
-                .unwrap_or(false)
-        })
+        .filter(|e| e.path().extension().map(|x| x == "json").unwrap_or(false))
         .collect();
     json_files.sort_by_key(|e| e.file_name());
 
@@ -33,7 +28,7 @@ pub fn generate(project_root: &Path) {
         let json_path = entry.path();
         let stem = json_path
             .file_stem()
-            .unwrap()
+            .expect("JSON file should have a stem")
             .to_string_lossy()
             .to_string();
 

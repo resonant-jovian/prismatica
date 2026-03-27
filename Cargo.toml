@@ -5,12 +5,15 @@ members = ["xtask"]
 unwrap_used = "deny"
 all = { level = "warn", priority = -1 }
 
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
 [package]
 name = "prismatica"
-version = "0.2.0"
+version = "1.0.0"
 edition = "2024"
 rust-version = "1.85"
-description = "290 scientific colormaps as compile-time Rust constants"
+description = "308 scientific colormaps as compile-time Rust constants"
 license = "GPL-3.0-only"
 repository = "https://github.com/resonant-jovian/prismatica"
 documentation = "https://docs.rs/prismatica"
@@ -30,14 +33,14 @@ alloc = []
 # (the maps that Nature Communications and most journals recommend)
 core = ["matplotlib", "crameri"]
 
-# Individual collections (290 colormaps + 70 discrete palettes total)
+# Individual collections (308 colormaps + 70 discrete palettes total)
 matplotlib = []       # 8 maps: viridis, inferno, magma, plasma, cividis, twilight, mako, rocket
 crameri = []          # 40 maps: batlow, berlin, roma, oslo, tokyo, hawaii, etc.
 cet = []              # 59 maps: CET-L*, CET-D*, CET-C*, CET-R*, CET-I*, CET-CB*
 cmocean = []          # 22 maps: thermal, haline, solar, ice, deep, balance, etc.
 colorbrewer = []      # 35 maps + 35 palettes: Blues, RdBu, Set2, Spectral, etc.
 cmasher = []          # 53 maps: ember, ocean, gothic, neon, fusion, etc.
-ncar = []             # 26 maps: NCAR NCL geoscience colormaps
+ncar = []             # 44 maps: NCAR NCL geoscience colormaps
 cartocolors = []      # 34 maps + 34 palettes: Burg, Mint, Bold, Vivid, etc.
 moreland = []         # 6 maps: cool-warm, black-body, Kindlmann, fast
 d3 = []               # 7 maps + 1 palette: Turbo, Rainbow, Sinebow, Tableau10, etc.
@@ -65,5 +68,7 @@ serde = { version = "1.0.228", optional = true, features = ["derive"] }
 workspace = true
 
 [dev-dependencies]
+image = { version = "0.25.10", features = ["png"] }
 insta = "1.42.2"
+plotters = { version = "0.3.7", features = ["svg_backend"] }
 proptest = "1.6.0"

@@ -213,7 +213,8 @@ fn try_parse_float_triple_from_line(line: &str) -> Option<[u8; 3]> {
     let b: f64 = parts[2].parse().ok()?;
 
     // Sanity check: should be in [0, 1]
-    if r < -0.01 || r > 1.01 || g < -0.01 || g > 1.01 || b < -0.01 || b > 1.01 {
+    let range = -0.01..=1.01;
+    if !range.contains(&r) || !range.contains(&g) || !range.contains(&b) {
         return None;
     }
 

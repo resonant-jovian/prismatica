@@ -3,8 +3,7 @@ use std::collections::BTreeMap;
 use std::io::Read;
 use std::path::Path;
 
-const CMASHER_ZIP_URL: &str =
-    "https://github.com/1313e/CMasher/archive/refs/heads/master.zip";
+const CMASHER_ZIP_URL: &str = "https://github.com/1313e/CMasher/archive/refs/heads/master.zip";
 
 const CMASHER_DIVERGING: &[&str] = &[
     "fusion",

@@ -101,15 +101,15 @@ fn parse_moreland_csv(text: &str) -> Vec<[u8; 3]> {
                 cols.len() >= 4,
                 "Moreland CSV line has fewer than 4 columns: {line}"
             );
-            let r: u8 = cols[1].parse().unwrap_or_else(|e| {
-                panic!("parse R from '{}': {e}", cols[1])
-            });
-            let g: u8 = cols[2].parse().unwrap_or_else(|e| {
-                panic!("parse G from '{}': {e}", cols[2])
-            });
-            let b: u8 = cols[3].parse().unwrap_or_else(|e| {
-                panic!("parse B from '{}': {e}", cols[3])
-            });
+            let r: u8 = cols[1]
+                .parse()
+                .unwrap_or_else(|e| panic!("parse R from '{}': {e}", cols[1]));
+            let g: u8 = cols[2]
+                .parse()
+                .unwrap_or_else(|e| panic!("parse G from '{}': {e}", cols[2]));
+            let b: u8 = cols[3]
+                .parse()
+                .unwrap_or_else(|e| panic!("parse B from '{}': {e}", cols[3]));
             [r, g, b]
         })
         .collect()

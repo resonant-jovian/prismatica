@@ -3,8 +3,7 @@ use std::collections::BTreeMap;
 use std::io::Read;
 use std::path::Path;
 
-const CRAMERI_ZIP_URL: &str =
-    "https://zenodo.org/records/8409685/files/ScientificColourMaps8.zip";
+const CRAMERI_ZIP_URL: &str = "https://zenodo.org/records/8409685/files/ScientificColourMaps8.zip";
 
 const CRAMERI_CYCLIC: &[&str] = &["romaO", "bamO", "brocO", "corkO", "vikO"];
 const CRAMERI_DIVERGING: &[&str] = &[

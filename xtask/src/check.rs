@@ -76,9 +76,8 @@ pub fn run(project_root: &Path) -> Result<()> {
         for (path, original_content) in &before {
             let full_path = project_root.join(path);
             if full_path.exists() || !after.contains_key(path) {
-                fs::write(&full_path, original_content).with_context(|| {
-                    format!("failed to restore original content of {path}")
-                })?;
+                fs::write(&full_path, original_content)
+                    .with_context(|| format!("failed to restore original content of {path}"))?;
             }
         }
         // Remove files that were newly created by generate but didn't exist before
@@ -98,10 +97,7 @@ pub fn run(project_root: &Path) -> Result<()> {
         }
         eprintln!();
         eprintln!("Run `cargo run -p xtask -- generate` to regenerate them.");
-        bail!(
-            "{} generated file(s) are out of date",
-            stale_files.len()
-        );
+        bail!("{} generated file(s) are out of date", stale_files.len());
     }
 }
 

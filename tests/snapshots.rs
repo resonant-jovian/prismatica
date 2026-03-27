@@ -42,24 +42,21 @@ mod snapshot_tests {
 
     #[test]
     fn crameri_mod_header() {
-        let content =
-            include_str!("../src/crameri/mod.rs");
+        let content = include_str!("../src/crameri/mod.rs");
         let header: String = content.lines().take(15).collect::<Vec<_>>().join("\n");
         insta::assert_snapshot!("crameri_mod_header", header);
     }
 
     #[test]
     fn batlow_colormap_definition() {
-        let content =
-            include_str!("../src/crameri/batlow.rs");
+        let content = include_str!("../src/crameri/batlow.rs");
         let header: String = content.lines().take(25).collect::<Vec<_>>().join("\n");
         insta::assert_snapshot!("batlow_definition", header);
     }
 
     #[test]
     fn colorbrewer_mod_header() {
-        let content =
-            include_str!("../src/colorbrewer/mod.rs");
+        let content = include_str!("../src/colorbrewer/mod.rs");
         let header: String = content.lines().take(15).collect::<Vec<_>>().join("\n");
         insta::assert_snapshot!("colorbrewer_mod_header", header);
     }

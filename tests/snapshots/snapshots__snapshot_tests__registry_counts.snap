@@ -2,7 +2,7 @@
 source: tests/snapshots.rs
 expression: summary
 ---
-total_colormaps: 290
+total_colormaps: 308
 total_palettes: 70
 
 collections:
@@ -12,7 +12,7 @@ collections:
   cmocean: 22
   colorbrewer: 35
   cmasher: 53
-  ncar: 26
+  ncar: 44
   cartocolors: 34
   moreland: 6
   d3: 7

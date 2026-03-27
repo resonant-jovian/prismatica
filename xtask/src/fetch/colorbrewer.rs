@@ -4,8 +4,7 @@ use std::path::Path;
 const COLORBREWER_JSON_URL: &str =
     "https://raw.githubusercontent.com/axismaps/colorbrewer/master/export/colorbrewer.json";
 
-const COLORBREWER_CITATION: &str =
-    "Brewer, C. A. (2003). ColorBrewer. www.colorbrewer2.org";
+const COLORBREWER_CITATION: &str = "Brewer, C. A. (2003). ColorBrewer. www.colorbrewer2.org";
 
 /// Map the ColorBrewer `"type"` field to our `ColormapKind` variant name.
 fn classify(cb_type: &str) -> &'static str {
@@ -32,15 +31,18 @@ fn parse_rgb_string(s: &str) -> [u8; 3] {
     let parts: Vec<&str> = inner.split(',').collect();
     assert_eq!(parts.len(), 3, "expected 3 components in rgb(): {s}");
 
-    let r: u8 = parts[0].trim().parse().unwrap_or_else(|e| {
-        panic!("parse R from '{s}': {e}")
-    });
-    let g: u8 = parts[1].trim().parse().unwrap_or_else(|e| {
-        panic!("parse G from '{s}': {e}")
-    });
-    let b: u8 = parts[2].trim().parse().unwrap_or_else(|e| {
-        panic!("parse B from '{s}': {e}")
-    });
+    let r: u8 = parts[0]
+        .trim()
+        .parse()
+        .unwrap_or_else(|e| panic!("parse R from '{s}': {e}"));
+    let g: u8 = parts[1]
+        .trim()
+        .parse()
+        .unwrap_or_else(|e| panic!("parse G from '{s}': {e}"));
+    let b: u8 = parts[2]
+        .trim()
+        .parse()
+        .unwrap_or_else(|e| panic!("parse B from '{s}': {e}"));
 
     [r, g, b]
 }
@@ -52,8 +54,7 @@ pub fn fetch(project_root: &Path) {
     std::fs::create_dir_all(&data_dir).expect("create data/colorbrewer/");
 
     let json_text = codegen::fetch_url_text(COLORBREWER_JSON_URL);
-    let root: serde_json::Value =
-        serde_json::from_str(&json_text).expect("parse ColorBrewer JSON");
+    let root: serde_json::Value = serde_json::from_str(&json_text).expect("parse ColorBrewer JSON");
 
     let obj = root.as_object().expect("top-level JSON must be an object");
 
@@ -95,9 +96,9 @@ pub fn fetch(project_root: &Path) {
         let colors: Vec<[u8; 3]> = color_strings
             .iter()
             .map(|v| {
-                let s = v.as_str().unwrap_or_else(|| {
-                    panic!("expected string in palette '{name}', got {v}")
-                });
+                let s = v
+                    .as_str()
+                    .unwrap_or_else(|| panic!("expected string in palette '{name}', got {v}"));
                 parse_rgb_string(s)
             })
             .collect();

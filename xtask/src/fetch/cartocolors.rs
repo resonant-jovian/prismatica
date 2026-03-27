@@ -125,10 +125,11 @@ fn extract_scheme_colors(ts_text: &str, name: &str) -> Option<Vec<[u8; 3]>> {
         if current_key.is_some() {
             // Collect hex colors from this line
             for part in trimmed.split('"') {
-                if part.starts_with('#') && part.len() == 7 {
-                    if let Some(c) = parse_hex_color(part) {
-                        current_colors.push(c);
-                    }
+                if part.starts_with('#')
+                    && part.len() == 7
+                    && let Some(c) = parse_hex_color(part)
+                {
+                    current_colors.push(c);
                 }
             }
         }

@@ -40,7 +40,9 @@ pub fn fetch_collection(project_root: &Path, name: &str) {
         "all" => fetch_all(project_root),
         other => {
             eprintln!("Unknown collection: {other}");
-            eprintln!("Available: crameri, matplotlib, cet, cmocean, moreland, cmasher, colorbrewer, cartocolors, ncar, all");
+            eprintln!(
+                "Available: crameri, matplotlib, cet, cmocean, moreland, cmasher, colorbrewer, cartocolors, ncar, all"
+            );
             std::process::exit(1);
         }
     }

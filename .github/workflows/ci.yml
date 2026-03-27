@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  INSTA_UPDATE: no
 
 jobs:
   test:
@@ -51,6 +52,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --all-features
+      - run: cargo test --doc --all-features
 
   no-std:
     name: no_std compatibility
@@ -75,3 +77,22 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo xtask check
+
+  feature-isolation:
+    name: Feature isolation (${{ matrix.feature }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        feature: [matplotlib, crameri, cet, cmocean, colorbrewer, cmasher, ncar, cartocolors, moreland, d3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo check --no-default-features --features ${{ matrix.feature }}
+
+  publish-dry-run:
+    name: Publish dry run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo publish --dry-run

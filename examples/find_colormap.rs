@@ -23,7 +23,10 @@ fn main() {
     println!("  {} diverging colormaps:", diverging.len());
     for cm in diverging.iter().take(8) {
         let c = cm.eval(0.5);
-        print!("  \x1b[48;2;{};{};{}m  \x1b[0m {}", c.r, c.g, c.b, cm.meta.name);
+        print!(
+            "  \x1b[48;2;{};{};{}m  \x1b[0m {}",
+            c.r, c.g, c.b, cm.meta.name
+        );
         println!(" ({})", cm.meta.collection);
     }
     if diverging.len() > 8 {

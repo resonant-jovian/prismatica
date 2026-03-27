@@ -4,9 +4,9 @@
 
 use proptest::prelude::*;
 
+use prismatica::Color;
 #[cfg(feature = "matplotlib")]
 use prismatica::matplotlib::VIRIDIS;
-use prismatica::Color;
 
 proptest! {
     #[test]
@@ -56,7 +56,7 @@ proptest! {
         prop_assert!(s.starts_with('#'));
         prop_assert_eq!(s.len(), 7);
         // Verify roundtrip through hex parsing
-        let hex = u32::from_str_radix(&s[1..], 16).unwrap();
+        let hex = u32::from_str_radix(&s[1..], 16).expect("valid hex from Display");
         prop_assert_eq!(Color::from_hex(hex), c);
     }
 }
@@ -66,10 +66,10 @@ proptest! {
     #[test]
     fn eval_returns_valid_color(t in 0.0f32..=1.0) {
         let c = VIRIDIS.eval(t);
-        // If we get here without panic, the color is valid (u8 fields are always in range)
-        prop_assert!(c.r <= 255);
-        prop_assert!(c.g <= 255);
-        prop_assert!(c.b <= 255);
+        // Verify eval doesn't panic and returns a valid Color
+        let _ = c.r;
+        let _ = c.g;
+        let _ = c.b;
     }
 
     #[test]

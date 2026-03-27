@@ -2,8 +2,7 @@ use crate::codegen::{self, ColormapMeta};
 use std::f64::consts::PI;
 use std::path::Path;
 
-const D3_CITATION: &str =
-    "Bostock, M. d3-scale-chromatic. github.com/d3/d3-scale-chromatic";
+const D3_CITATION: &str = "Bostock, M. d3-scale-chromatic. github.com/d3/d3-scale-chromatic";
 const D3_AUTHOR: &str = "Mike Bostock / d3";
 
 // ---------------------------------------------------------------------------
@@ -56,8 +55,8 @@ const B: f64 = 1.78277;
 const C: f64 = -0.29227;
 const D: f64 = -0.90649;
 const E: f64 = 1.97294;
-const ED: f64 = 0.0; // E * D, but we use separate constants
-const EB: f64 = 0.0; // E * B
+const _ED: f64 = 0.0; // E * D, but we use separate constants
+const _EB: f64 = 0.0; // E * B
 
 /// Convert a cubehelix (h, s, l) to [u8; 3].
 ///
@@ -79,11 +78,7 @@ fn cubehelix_to_rgb(h: f64, s: f64, l: f64) -> [u8; 3] {
 
 /// Interpolate along the cubehelix color space (long path) between two
 /// (h, s, l) endpoints.  This matches d3's `interpolateCubehelixLong`.
-fn cubehelix_long(
-    h0: f64, s0: f64, l0: f64,
-    h1: f64, s1: f64, l1: f64,
-    t: f64,
-) -> [u8; 3] {
+fn cubehelix_long(h0: f64, s0: f64, l0: f64, h1: f64, s1: f64, l1: f64, t: f64) -> [u8; 3] {
     let h = h0 + (h1 - h0) * t;
     let s = s0 + (s1 - s0) * t;
     let l = l0 + (l1 - l0) * t;
@@ -201,11 +196,21 @@ pub fn fetch(project_root: &Path) {
         ("Rainbow", "Cyclic", false, generate_rainbow()),
         ("Warm", "Sequential", false, generate_warm()),
         ("Cool", "Sequential", false, generate_cool()),
-        ("CubehelixDefault", "Sequential", false, generate_cubehelix_default()),
+        (
+            "CubehelixDefault",
+            "Sequential",
+            false,
+            generate_cubehelix_default(),
+        ),
     ];
 
     for (name, kind, perceptually_uniform, lut) in &continuous_maps {
-        assert_eq!(lut.len(), 256, "{name} LUT has {} entries, expected 256", lut.len());
+        assert_eq!(
+            lut.len(),
+            256,
+            "{name} LUT has {} entries, expected 256",
+            lut.len()
+        );
 
         let meta = ColormapMeta {
             name: name.to_string(),

@@ -1,5 +1,9 @@
 /// An sRGB color with 8-bit channels.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(
+    feature = "serde-support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
@@ -45,17 +49,43 @@ impl Color {
     }
 
     /// Serialize the color as a 24-bit hex value (e.g., `0xFF8800`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let c = Color::new(255, 136, 0);
+    /// assert_eq!(c.to_hex(), 0xFF8800);
+    /// assert_eq!(Color::from_hex(c.to_hex()), c);
+    /// ```
     pub const fn to_hex(self) -> u32 {
         (self.r as u32) << 16 | (self.g as u32) << 8 | self.b as u32
     }
 
     /// Format the color as a CSS hex string (e.g., `"#ff8800"`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let c = Color::new(255, 136, 0);
+    /// assert_eq!(c.to_css_hex(), "#ff8800");
+    /// ```
     #[cfg(any(feature = "alloc", feature = "std"))]
     pub fn to_css_hex(self) -> alloc::string::String {
         alloc::format!("#{:02x}{:02x}{:02x}", self.r, self.g, self.b)
     }
 
     /// Convert to floating-point RGB in `[0.0, 1.0]`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let (r, g, b) = Color::new(255, 0, 128).to_f32();
+    /// assert!((r - 1.0).abs() < 0.01);
+    /// assert!(g < 0.01);
+    /// ```
     pub const fn to_f32(self) -> (f32, f32, f32) {
         (
             self.r as f32 / 255.0,
@@ -106,6 +136,16 @@ impl Color {
     /// `t` is clamped to `[0.0, 1.0]`. Interpolation is performed in
     /// sRGB space, matching the behavior of matplotlib, ParaView, and
     /// most scientific visualization tools.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let black = Color::new(0, 0, 0);
+    /// let white = Color::new(255, 255, 255);
+    /// let mid = black.lerp(white, 0.5);
+    /// assert_eq!(mid, Color::new(127, 127, 127));
+    /// ```
     pub fn lerp(self, other: Color, t: f32) -> Color {
         let t = t.clamp(0.0, 1.0);
         Color {
@@ -156,7 +196,7 @@ impl core::fmt::Display for ColormapKind {
 }
 
 /// Metadata about a colormap's scientific properties.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
@@ -263,24 +303,48 @@ impl Colormap {
     }
 
     /// Extract `n` evenly-spaced discrete colors from the colormap.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let palette = BATLOW.colors(5);
+    /// assert_eq!(palette.len(), 5);
+    /// ```
     #[cfg(any(feature = "alloc", feature = "std"))]
     pub fn colors(&self, n: usize) -> alloc::vec::Vec<Color> {
         (0..n).map(|i| self.eval_rational(i, n)).collect()
     }
 
     /// Return the raw LUT as a slice of `[r, g, b]` arrays.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// assert_eq!(BATLOW.lut_raw().len(), 256);
+    /// ```
     pub fn lut_raw(&self) -> &'static [[u8; 3]] {
         self.lut
     }
 }
 
 /// A reversed view of a colormap. Zero allocation.
+#[derive(Debug, Clone, Copy)]
 pub struct ReversedColormap<'a> {
     inner: &'a Colormap,
 }
 
 impl ReversedColormap<'_> {
     /// Sample the reversed colormap at `t` (equivalent to `inner.eval(1 - t)`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let rev = BATLOW.reversed();
+    /// assert_eq!(rev.eval(0.0), BATLOW.eval(1.0));
+    /// ```
     pub fn eval(&self, t: f32) -> Color {
         self.inner.eval(1.0 - t)
     }
@@ -313,16 +377,38 @@ impl DiscretePalette {
     }
 
     /// Number of distinct colors in the palette.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// assert!(SET2_PALETTE.len() > 0);
+    /// ```
     pub fn len(&self) -> usize {
         self.colors.len()
     }
 
     /// Returns `true` if the palette contains no colors.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// assert!(!SET2_PALETTE.is_empty());
+    /// ```
     pub fn is_empty(&self) -> bool {
         self.colors.is_empty()
     }
 
     /// All colors as a `Vec`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// let colors = SET2_PALETTE.all_colors();
+    /// assert_eq!(colors.len(), SET2_PALETTE.len());
+    /// ```
     #[cfg(any(feature = "alloc", feature = "std"))]
     pub fn all_colors(&self) -> alloc::vec::Vec<Color> {
         self.colors

@@ -141,13 +141,23 @@ mod cet_tests {
     #[test]
     fn all_cet_luts_are_256() {
         for cm in prismatica::cet::ALL {
-            assert_eq!(cm.lut.len(), 256, "CET map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "CET map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
     #[test]
     fn cet_collection_count() {
-        assert!(prismatica::cet::ALL.len() >= 56, "Expected >= 56 CET maps, got {}", prismatica::cet::ALL.len());
+        assert!(
+            prismatica::cet::ALL.len() >= 56,
+            "Expected >= 56 CET maps, got {}",
+            prismatica::cet::ALL.len()
+        );
     }
 
     #[test]
@@ -162,7 +172,9 @@ mod cet_tests {
                 assert!(
                     dr <= 10 && dg <= 10 && db <= 10,
                     "CET cyclic map '{}' doesn't wrap: first={:?}, last={:?}",
-                    cm.meta.name, first, last
+                    cm.meta.name,
+                    first,
+                    last
                 );
             }
         }
@@ -176,7 +188,13 @@ mod cmocean_tests {
     #[test]
     fn all_cmocean_luts_are_256() {
         for cm in prismatica::cmocean::ALL {
-            assert_eq!(cm.lut.len(), 256, "CMOcean map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "CMOcean map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -192,7 +210,10 @@ mod cmocean_tests {
 
     #[test]
     fn cmocean_balance_is_diverging() {
-        assert_eq!(prismatica::cmocean::BALANCE.meta.kind, ColormapKind::Diverging);
+        assert_eq!(
+            prismatica::cmocean::BALANCE.meta.kind,
+            ColormapKind::Diverging
+        );
     }
 }
 
@@ -203,7 +224,13 @@ mod moreland_tests {
     #[test]
     fn all_moreland_luts_are_256() {
         for cm in prismatica::moreland::ALL {
-            assert_eq!(cm.lut.len(), 256, "Moreland map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "Moreland map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -214,7 +241,10 @@ mod moreland_tests {
 
     #[test]
     fn smooth_cool_warm_is_diverging() {
-        assert_eq!(prismatica::moreland::SMOOTH_COOL_WARM.meta.kind, ColormapKind::Diverging);
+        assert_eq!(
+            prismatica::moreland::SMOOTH_COOL_WARM.meta.kind,
+            ColormapKind::Diverging
+        );
     }
 }
 
@@ -225,18 +255,31 @@ mod cmasher_tests {
     #[test]
     fn all_cmasher_luts_are_256() {
         for cm in prismatica::cmasher::ALL {
-            assert_eq!(cm.lut.len(), 256, "CMasher map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "CMasher map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
     #[test]
     fn cmasher_collection_count() {
-        assert!(prismatica::cmasher::ALL.len() >= 30, "Expected >= 30 CMasher maps, got {}", prismatica::cmasher::ALL.len());
+        assert!(
+            prismatica::cmasher::ALL.len() >= 30,
+            "Expected >= 30 CMasher maps, got {}",
+            prismatica::cmasher::ALL.len()
+        );
     }
 
     #[test]
     fn cmasher_fusion_is_diverging() {
-        assert_eq!(prismatica::cmasher::FUSION.meta.kind, ColormapKind::Diverging);
+        assert_eq!(
+            prismatica::cmasher::FUSION.meta.kind,
+            ColormapKind::Diverging
+        );
     }
 }
 
@@ -247,7 +290,13 @@ mod colorbrewer_tests {
     #[test]
     fn all_colorbrewer_luts_are_256() {
         for cm in prismatica::colorbrewer::ALL {
-            assert_eq!(cm.lut.len(), 256, "ColorBrewer map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "ColorBrewer map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -263,7 +312,8 @@ mod colorbrewer_tests {
             assert!(
                 p.len() >= 3 && p.len() <= 12,
                 "palette '{}' has {} colors, expected 3-12",
-                p.meta.name, p.len()
+                p.meta.name,
+                p.len()
             );
         }
     }
@@ -279,12 +329,16 @@ mod colorbrewer_tests {
 
 #[cfg(feature = "cartocolors")]
 mod cartocolors_tests {
-    use super::*;
-
     #[test]
     fn all_cartocolors_luts_are_256() {
         for cm in prismatica::cartocolors::ALL {
-            assert_eq!(cm.lut.len(), 256, "CartoColors map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "CartoColors map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -304,7 +358,13 @@ mod ncar_tests {
     #[test]
     fn all_ncar_luts_are_256() {
         for cm in prismatica::ncar::ALL {
-            assert_eq!(cm.lut.len(), 256, "NCAR map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "NCAR map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -321,7 +381,13 @@ mod d3_tests {
     #[test]
     fn all_d3_luts_are_256() {
         for cm in prismatica::d3::ALL {
-            assert_eq!(cm.lut.len(), 256, "d3 map '{}' has {} entries", cm.meta.name, cm.lut.len());
+            assert_eq!(
+                cm.lut.len(),
+                256,
+                "d3 map '{}' has {} entries",
+                cm.meta.name,
+                cm.lut.len()
+            );
         }
     }
 
@@ -428,8 +494,16 @@ mod full_registry_tests {
     fn all_collections_represented() {
         let all = all_colormaps();
         for expected in &[
-            "matplotlib", "crameri", "cet", "cmocean", "moreland",
-            "cmasher", "colorbrewer", "cartocolors", "ncar", "d3",
+            "matplotlib",
+            "crameri",
+            "cet",
+            "cmocean",
+            "moreland",
+            "cmasher",
+            "colorbrewer",
+            "cartocolors",
+            "ncar",
+            "d3",
         ] {
             assert!(
                 all.iter().any(|cm| cm.meta.collection == *expected),
@@ -442,10 +516,7 @@ mod full_registry_tests {
     #[test]
     fn discrete_palettes_exist() {
         let palettes = all_discrete_palettes();
-        assert!(
-            !palettes.is_empty(),
-            "Expected discrete palettes"
-        );
+        assert!(!palettes.is_empty(), "Expected discrete palettes");
         // Should have at least ColorBrewer (35) + CartoColors (34) + d3 (1)
         assert!(
             palettes.len() >= 60,
@@ -461,5 +532,33 @@ mod full_registry_tests {
         // d3
         assert!(find_palette_by_name("Tableau10").is_some());
         assert!(find_palette_by_name("nonexistent").is_none());
+    }
+
+    #[test]
+    fn no_cross_collection_colormap_name_duplicates() {
+        let all = all_colormaps();
+        let mut seen = std::collections::HashMap::new();
+        for cm in &all {
+            if let Some(prev) = seen.insert(cm.meta.name, cm.meta.collection) {
+                panic!(
+                    "Duplicate colormap '{}' in both '{}' and '{}'",
+                    cm.meta.name, prev, cm.meta.collection
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn no_cross_collection_palette_name_duplicates() {
+        let all = all_discrete_palettes();
+        let mut seen = std::collections::HashMap::new();
+        for p in &all {
+            if let Some(prev) = seen.insert(p.meta.name, p.meta.collection) {
+                panic!(
+                    "Duplicate palette '{}' in both '{}' and '{}'",
+                    p.meta.name, prev, p.meta.collection
+                );
+            }
+        }
     }
 }

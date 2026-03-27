@@ -50,8 +50,7 @@ const NCAR_MAPS: &[(&str, &str)] = &[
 
 const NCAR_CITATION: &str = "NCAR Command Language (NCL). doi.org/10.5065/D6WD3XH5";
 
-const BASE_URL: &str =
-    "https://raw.githubusercontent.com/NCAR/ncl/develop/ni/src/db/colormaps";
+const BASE_URL: &str = "https://raw.githubusercontent.com/NCAR/ncl/develop/ni/src/db/colormaps";
 
 pub fn fetch(project_root: &Path) {
     println!("Fetching NCAR NCL colormaps from GitHub...");
@@ -142,24 +141,14 @@ fn parse_rgb_file(text: &str) -> Vec<[u8; 3]> {
             continue;
         }
 
-        // Parse R G B integers
+        // Parse R G B values (integers 0-255 or floats 0.0-1.0)
         let parts: Vec<&str> = trimmed.split_whitespace().collect();
         if parts.len() < 3 {
             continue;
         }
-        let r: u8 = match parts[0].parse() {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
-        let g: u8 = match parts[1].parse() {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
-        let b: u8 = match parts[2].parse() {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
-        colors.push([r, g, b]);
+        if let Some(rgb) = parse_rgb_triplet(parts[0], parts[1], parts[2]) {
+            colors.push(rgb);
+        }
     }
 
     // Strip background/foreground sentinel entries if ncolors header was present
@@ -174,4 +163,21 @@ fn parse_rgb_file(text: &str) -> Vec<[u8; 3]> {
     }
 
     colors
+}
+
+/// Parse an R, G, B triplet that may be integer (0-255) or float (0.0-1.0).
+fn parse_rgb_triplet(r_str: &str, g_str: &str, b_str: &str) -> Option<[u8; 3]> {
+    // Try integer first
+    if let (Ok(r), Ok(g), Ok(b)) = (
+        r_str.parse::<u8>(),
+        g_str.parse::<u8>(),
+        b_str.parse::<u8>(),
+    ) {
+        return Some([r, g, b]);
+    }
+    // Try float (0.0-1.0)
+    let r: f64 = r_str.parse().ok()?;
+    let g: f64 = g_str.parse().ok()?;
+    let b: f64 = b_str.parse().ok()?;
+    Some(codegen::float_to_u8(r, g, b))
 }

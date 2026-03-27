@@ -8,9 +8,7 @@
 [![Support on thanks.dev](https://img.shields.io/badge/Support-thanks.dev-green)](https://thanks.dev/u/gh/resonant-jovian)
 
 [![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
-
-> [!IMPORTANT]
-> v0.2.0 — 290 colormaps + 70 discrete palettes across 10 collections. All collections implemented. API may still change before v1.0.
+[![MSRV](https://img.shields.io/badge/MSRV-1.85-blue.svg)]()
 
 ---
 
@@ -29,16 +27,16 @@
 | CMasher | Done | 53 maps |
 | ColorBrewer | Done | 35 maps + 35 palettes |
 | CartoColors | Done | 34 maps + 34 palettes |
-| NCAR NCL | Done | 26 maps |
+| NCAR NCL | Done | 44 maps |
 | d3 | Done | 7 maps + 1 palette |
 | Framework integrations (egui, plotters, image, serde) | Done | |
-| **Total** | | **290 colormaps + 70 palettes** |
+| **Total** | | **308 colormaps + 70 palettes** |
 
 ---
 
 ## Highlights
 
-- **290 scientific colormaps** from 10 established collections
+- **308 scientific colormaps** from 10 established collections
 - **70 discrete palettes** for categorical data (ColorBrewer, CartoColors, d3)
 - **Compile-time constants** -- zero runtime file I/O, zero parsing
 - **`#![no_std]`** -- core functionality works without allocation
@@ -66,7 +64,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.2.0"
+prismatica = "1.0.0"
 ```
 
 Use a colormap:
@@ -88,11 +86,11 @@ println!("RGB: ({}, {}, {})", color.r, color.g, color.b);
 | CMOcean | Kristen Thyng | 22 | | Oceanographic sequential, diverging |
 | ColorBrewer | Cynthia Brewer | 35 | 35 | Sequential, diverging, qualitative |
 | CMasher | Ellert van der Velden | 53 | | Sequential, diverging (astrophysics) |
-| NCAR NCL | NCAR | 26 | | Geoscience sequential, diverging |
+| NCAR NCL | NCAR | 44 | | Geoscience sequential, diverging |
 | CartoColors | CARTO | 34 | 34 | Cartographic sequential, diverging, qualitative |
 | Moreland | Kenneth Moreland | 6 | | Cool-warm diverging, black body, Kindlmann |
 | d3 | Mike Bostock | 7 | 1 | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
-| **Total** | | **290** | **70** | |
+| **Total** | | **308** | **70** | |
 
 ### Choosing the right colormap
 
@@ -197,11 +195,11 @@ let palette = prismatica::find_palette_by_name("Blues").unwrap();
 | `cmocean` | 22 | thermal, haline, solar, ice, deep, and 17 more |
 | `colorbrewer` | 35 + 35 palettes | Blues, RdBu, Set2, Spectral, and more |
 | `cmasher` | 53 | ember, ocean, gothic, fusion, wildfire, and more |
-| `ncar` | 26 | NCAR NCL geoscience colour tables |
+| `ncar` | 44 | NCAR NCL geoscience colour tables |
 | `cartocolors` | 34 + 34 palettes | CARTO cartographic colour schemes |
 | `moreland` | 6 | cool-warm, black body, Kindlmann, extended variants |
 | `d3` | 7 + 1 palette | Turbo, Rainbow, Sinebow, Cubehelix, Tableau10 |
-| `all` | 290 + 70 palettes | All collections |
+| `all` | 308 + 70 palettes | All collections |
 
 ### Framework integrations
 
@@ -219,9 +217,9 @@ Each colormap is a 256x3 = 768-byte LUT plus ~200 bytes of metadata. Approximate
 | Feature | Maps | Size |
 |---|---|---|
 | `core` (default) | 48 | ~48 KB |
-| `all` | 290 | ~290 KB |
+| `all` | 308 | ~308 KB |
 
-Even with all 290 colormaps enabled, the total is smaller than a single PNG image.
+Even with all 308 colormaps enabled, the total is smaller than a single PNG image.
 
 ### Metadata
 
@@ -280,7 +278,7 @@ src/
 ├── cmocean/            # Feature: "cmocean" — 22 maps
 ├── colorbrewer/        # Feature: "colorbrewer" — 35 maps + 35 palettes
 ├── cmasher/            # Feature: "cmasher" — 53 maps
-├── ncar/               # Feature: "ncar" — 26 maps
+├── ncar/               # Feature: "ncar" — 44 maps
 ├── cartocolors/        # Feature: "cartocolors" — 34 maps + 34 palettes
 ├── moreland/           # Feature: "moreland" — 6 maps
 └── d3/                 # Feature: "d3" — 7 maps + 1 palette
@@ -356,7 +354,7 @@ Snapshot tests use [insta](https://insta.rs/) to detect codegen changes. After m
 | colorous | ~40 | Partial | None | d3 only | Yes |
 | colorgrad | ~40 | No (interpolated) | None | d3 + custom | No |
 | scarlet | ~5 | No (computed) | None | Basic only | No |
-| **prismatica** | **290** | **Yes (256-step const)** | **Full** | **10 collections** | **Yes** |
+| **prismatica** | **308** | **Yes (256-step const)** | **Full** | **10 collections** | **Yes** |
 
 ---
 

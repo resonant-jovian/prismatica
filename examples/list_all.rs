@@ -36,7 +36,12 @@ fn main() {
     }
 
     println!("\nDiscrete palettes:");
-    println!("  {name:<24} {n:<6} {collection:<14}", name = "NAME", n = "COLORS", collection = "COLLECTION");
+    println!(
+        "  {name:<24} {n:<6} {collection:<14}",
+        name = "NAME",
+        n = "COLORS",
+        collection = "COLLECTION"
+    );
     println!("  {}", "-".repeat(46));
 
     for p in &palettes {

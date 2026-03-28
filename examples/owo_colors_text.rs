@@ -9,7 +9,10 @@ use owo_colors::OwoColorize;
 use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Per-character gradient text
     println!("Per-character gradient:");
@@ -49,10 +52,6 @@ fn main() {
         let rgb: owo_colors::Rgb = VIRIDIS.eval(t).into();
         let fg_text = format!(" Foreground at t={t:.2} ");
         let bg_text = format!(" Background at t={t:.2} ");
-        println!(
-            "  {}  {}",
-            fg_text.color(rgb).bold(),
-            bg_text.on_color(rgb),
-        );
+        println!("  {}  {}", fg_text.color(rgb).bold(), bg_text.on_color(rgb),);
     }
 }

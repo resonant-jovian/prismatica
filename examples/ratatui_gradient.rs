@@ -12,7 +12,10 @@ use ratatui::style::Color as RatatuiColor;
 fn main() {
     let n = 48;
 
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Render a full-width gradient bar
     println!("Gradient ({n} steps):");

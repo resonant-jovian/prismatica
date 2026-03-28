@@ -5,8 +5,8 @@
 //!
 //! Run with: `cargo run --example syntect_highlight --features "matplotlib,syntect-integration"`
 
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 use syntect::highlighting::Color as SyntectColor;
 
 fn main() {

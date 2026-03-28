@@ -17,8 +17,8 @@
 //! assert_eq!(color, back);
 //! ```
 
-use crate::impl_into_framework_color;
 use crate::Color;
+use crate::impl_into_framework_color;
 
 /// Convert a prismatica [`Color`] to a [`syntect::highlighting::Color`].
 ///

@@ -6,8 +6,8 @@
 //! Run with: `cargo run --example macroquad_colors --features "matplotlib,macroquad-integration"`
 
 use macroquad::color::Color as MqColor;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let cm = &VIRIDIS;

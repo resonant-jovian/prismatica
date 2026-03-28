@@ -7,8 +7,8 @@
 //! Run with: `cargo run --example iced_colors --features "matplotlib,iced-integration"`
 
 use iced_core::Color as IcedColor;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let cm = &VIRIDIS;

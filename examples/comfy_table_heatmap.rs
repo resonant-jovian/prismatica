@@ -12,7 +12,10 @@ use comfy_table::{Attribute, Cell, CellAlignment, Color as TableColor, Table};
 use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Build a heatmap table with sample data
     let data: Vec<Vec<f32>> = vec![
@@ -56,7 +59,9 @@ fn main() {
     // Also show a simple gradient row
     println!("\nGradient strip:");
     let mut gradient_table = Table::new();
-    gradient_table.load_preset(UTF8_FULL).apply_modifier(UTF8_ROUND_CORNERS);
+    gradient_table
+        .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_ROUND_CORNERS);
 
     let header: Vec<Cell> = (0..10)
         .map(|i| {

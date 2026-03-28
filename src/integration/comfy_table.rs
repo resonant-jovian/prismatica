@@ -31,7 +31,11 @@ use crate::{Color, ConversionError};
 /// ```
 impl From<Color> for ::comfy_table::Color {
     fn from(c: Color) -> Self {
-        ::comfy_table::Color::Rgb { r: c.r, g: c.g, b: c.b }
+        ::comfy_table::Color::Rgb {
+            r: c.r,
+            g: c.g,
+            b: c.b,
+        }
     }
 }
 

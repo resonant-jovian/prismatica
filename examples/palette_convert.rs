@@ -6,8 +6,8 @@
 //! Run with: `cargo run --example palette_convert --features "matplotlib,palette-integration"`
 
 use palette::Srgb;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let cm = &VIRIDIS;

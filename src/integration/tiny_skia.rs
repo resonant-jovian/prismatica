@@ -18,8 +18,8 @@
 //! ```
 
 use super::f32_to_u8;
-use crate::impl_into_framework_color;
 use crate::Color;
+use crate::impl_into_framework_color;
 
 /// Convert a prismatica [`Color`] to a [`tiny_skia::Color`].
 ///
@@ -50,7 +50,11 @@ impl From<Color> for ::tiny_skia::Color {
 /// ```
 impl From<::tiny_skia::Color> for Color {
     fn from(c: ::tiny_skia::Color) -> Self {
-        Color::new(f32_to_u8(c.red()), f32_to_u8(c.green()), f32_to_u8(c.blue()))
+        Color::new(
+            f32_to_u8(c.red()),
+            f32_to_u8(c.green()),
+            f32_to_u8(c.blue()),
+        )
     }
 }
 

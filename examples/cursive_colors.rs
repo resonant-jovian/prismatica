@@ -6,15 +6,18 @@
 //! Run with: `cargo run --example cursive_colors --features "matplotlib,cursive-integration"`
 
 use cursive_core::theme::Color as CursiveColor;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let cm = &VIRIDIS;
     let n = 8;
 
     println!("Colormap: {} ({})\n", cm.meta.name, cm.meta.collection);
-    println!("  {:<4} {:>3} {:>3} {:>3}   cursive variant", "i", "R", "G", "B");
+    println!(
+        "  {:<4} {:>3} {:>3} {:>3}   cursive variant",
+        "i", "R", "G", "B"
+    );
     println!("  {}", "-".repeat(44));
 
     for i in 0..n {

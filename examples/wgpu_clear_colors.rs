@@ -5,8 +5,8 @@
 //!
 //! Run with: `cargo run --example wgpu_clear_colors --features "matplotlib,wgpu-integration"`
 
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 use wgpu_types::Color as WgpuColor;
 
 fn main() {

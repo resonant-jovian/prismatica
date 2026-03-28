@@ -6,8 +6,8 @@
 //! Run with: `cargo run --example tiny_skia_gradient --features "matplotlib,tiny-skia-integration,image-integration"`
 
 use image::RgbImage;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 use tiny_skia::Color as SkiaColor;
 
 fn main() {
@@ -19,8 +19,7 @@ fn main() {
     println!("Rendering {}x{} gradient...\n", width, height);
 
     // Build a tiny-skia Pixmap and fill it with the colormap gradient
-    let mut pixmap =
-        tiny_skia::Pixmap::new(width, height).expect("failed to create pixmap");
+    let mut pixmap = tiny_skia::Pixmap::new(width, height).expect("failed to create pixmap");
 
     for x in 0..width {
         let t = x as f32 / (width - 1) as f32;

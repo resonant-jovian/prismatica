@@ -31,7 +31,11 @@ use crate::{Color, ConversionError};
 /// ```
 impl From<Color> for ::colored::Color {
     fn from(c: Color) -> Self {
-        ::colored::Color::TrueColor { r: c.r, g: c.g, b: c.b }
+        ::colored::Color::TrueColor {
+            r: c.r,
+            g: c.g,
+            b: c.b,
+        }
     }
 }
 

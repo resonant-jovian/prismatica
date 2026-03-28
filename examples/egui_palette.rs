@@ -6,13 +6,16 @@
 //! Run with: `cargo run --example egui_palette --features "matplotlib,egui-integration"`
 
 use egui::Color32;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let n = 8;
 
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
     println!(
         "  {:<4} {:<18} {:<18} {:<10}",
         "i", "prismatica RGB", "egui Color32", "roundtrip"

@@ -12,7 +12,10 @@ use prismatica::matplotlib::VIRIDIS;
 fn main() {
     let n = 48;
 
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Background-colored gradient
     println!("Background gradient ({n} steps):");
@@ -20,7 +23,7 @@ fn main() {
     for i in 0..n {
         let t = i as f32 / (n - 1) as f32;
         let color: CtColor = VIRIDIS.eval(t).into();
-        print!("{}{} {}", SetBackgroundColor(color), " ", ResetColor);
+        print!("{}  {}", SetBackgroundColor(color), ResetColor);
     }
     println!();
 
@@ -37,10 +40,7 @@ fn main() {
 
     // Combined foreground + background blocks with RGB values
     println!("\nSample values:");
-    println!(
-        "  {:<4} {:<8} {:<18} {}",
-        "i", "t", "RGB", "swatch"
-    );
+    println!("  {:<4} {:<8} {:<18} swatch", "i", "t", "RGB");
     println!("  {}", "-".repeat(44));
     for i in 0..8 {
         let t = i as f32 / 7.0;

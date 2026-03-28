@@ -9,11 +9,17 @@ use colored::Colorize;
 use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Color each word of a sentence along the colormap
     println!("Colored words:");
-    let words: Vec<&str> = "Prismatica provides 308 scientific colormaps as compile-time Rust constants".split_whitespace().collect();
+    let words: Vec<&str> =
+        "Prismatica provides 308 scientific colormaps as compile-time Rust constants"
+            .split_whitespace()
+            .collect();
     print!("  ");
     for (i, word) in words.iter().enumerate() {
         let t = i as f32 / (words.len() - 1) as f32;

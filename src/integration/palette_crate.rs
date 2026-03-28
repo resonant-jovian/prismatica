@@ -16,8 +16,8 @@
 //! assert_eq!(color, back); // lossless u8 roundtrip
 //! ```
 
-use crate::impl_into_framework_color;
 use crate::Color;
+use crate::impl_into_framework_color;
 
 /// Convert a prismatica [`Color`] to a [`palette::Srgb<u8>`](::palette::Srgb).
 ///

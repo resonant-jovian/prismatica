@@ -5,8 +5,8 @@
 //!
 //! Run with: `cargo run --example slint_palette --features "matplotlib,slint-integration"`
 
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 use slint::Color as SlintColor;
 
 fn main() {

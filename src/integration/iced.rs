@@ -18,8 +18,8 @@
 //! ```
 
 use super::{f32_to_u8, u8_to_f32};
-use crate::impl_into_framework_color;
 use crate::Color;
+use crate::impl_into_framework_color;
 
 /// Convert a prismatica [`Color`] to an [`iced_core::Color`].
 ///

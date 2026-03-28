@@ -6,8 +6,8 @@
 //! Run with: `cargo run --example bevy_color_srgba --features "matplotlib,bevy-color-integration"`
 
 use bevy_color::Srgba;
-use prismatica::matplotlib::VIRIDIS;
 use prismatica::Color;
+use prismatica::matplotlib::VIRIDIS;
 
 fn main() {
     let cm = &VIRIDIS;

@@ -6,13 +6,16 @@
 //!
 //! Run with: `cargo run --example termion_gradient --features "matplotlib,termion-integration"`
 
-use termion::color;
 use prismatica::matplotlib::VIRIDIS;
+use termion::color;
 
 fn main() {
     let n = 48;
 
-    println!("Colormap: {} ({})\n", VIRIDIS.meta.name, VIRIDIS.meta.collection);
+    println!(
+        "Colormap: {} ({})\n",
+        VIRIDIS.meta.name, VIRIDIS.meta.collection
+    );
 
     // Background-colored gradient bar
     println!("Background gradient ({n} steps):");
@@ -49,10 +52,7 @@ fn main() {
 
     // Labeled discrete samples with Fg and Bg
     println!("\nDiscrete samples:");
-    println!(
-        "  {:<4} {:<8} {:<14} {}",
-        "i", "t", "RGB", "swatch"
-    );
+    println!("  {:<4} {:<8} {:<14} swatch", "i", "t", "RGB");
     println!("  {}", "-".repeat(40));
     for i in 0..8 {
         let t = i as f32 / 7.0;

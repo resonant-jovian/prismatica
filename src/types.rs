@@ -156,6 +156,37 @@ impl Color {
     }
 }
 
+/// Error returned when a framework color cannot be converted to [`Color`].
+///
+/// This occurs when converting from enum-based color types (e.g.,
+/// `ratatui::style::Color`) that have variants other than RGB.
+///
+/// # Examples
+///
+/// ```ignore
+/// use prismatica::Color;
+///
+/// // Only the Rgb variant of ratatui::style::Color can convert
+/// let rgb = ratatui::style::Color::Rgb(128, 64, 32);
+/// assert!(Color::try_from(rgb).is_ok());
+///
+/// let named = ratatui::style::Color::Red;
+/// assert!(Color::try_from(named).is_err());
+/// ```
+#[derive(Debug, Clone)]
+pub struct ConversionError {
+    /// Description of why the conversion failed.
+    pub message: &'static str,
+}
+
+impl core::fmt::Display for ConversionError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl core::error::Error for ConversionError {}
+
 fn srgb_to_linear(c: f64) -> f64 {
     if c <= 0.03928 {
         c / 12.92
@@ -419,6 +450,7 @@ impl DiscretePalette {
 }
 
 #[cfg(test)]
+#[cfg(any(feature = "alloc", feature = "std"))]
 mod tests {
     use super::*;
     use alloc::format;

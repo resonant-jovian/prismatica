@@ -26,3 +26,8 @@ data/
 
 ref/*
 docs/*
+
+# Example output artifacts
+batlow_gradient.png
+heatmap.svg
+viridis_tiny_skia_gradient.png

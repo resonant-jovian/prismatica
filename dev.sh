@@ -50,7 +50,14 @@ require_cmd() {
 
 # ── Examples ─────────────────────────────────────────────────────────────────
 
-ALL_EXAMPLES=(list_all sample_colormap find_colormap export_palette image_gradient plotters_heatmap)
+ALL_EXAMPLES=(
+    list_all sample_colormap find_colormap export_palette
+    image_gradient plotters_heatmap
+    egui_palette palette_convert bevy_color_srgba iced_colors
+    macroquad_colors tiny_skia_gradient wgpu_clear_colors slint_palette
+    ratatui_gradient crossterm_gradient colored_text owo_colors_text
+    termion_gradient cursive_colors comfy_table_heatmap syntect_highlight
+)
 
 # Features required by specific examples
 declare -A EXAMPLE_FEATURES=(
@@ -60,6 +67,22 @@ declare -A EXAMPLE_FEATURES=(
     [export_palette]="all"
     [image_gradient]="all,image-integration"
     [plotters_heatmap]="matplotlib,plotters-integration"
+    [egui_palette]="matplotlib,egui-integration"
+    [palette_convert]="matplotlib,palette-integration"
+    [bevy_color_srgba]="matplotlib,bevy-color-integration"
+    [iced_colors]="matplotlib,iced-integration"
+    [macroquad_colors]="matplotlib,macroquad-integration"
+    [tiny_skia_gradient]="matplotlib,tiny-skia-integration,image-integration"
+    [wgpu_clear_colors]="matplotlib,wgpu-integration"
+    [slint_palette]="matplotlib,slint-integration"
+    [ratatui_gradient]="matplotlib,ratatui-integration"
+    [crossterm_gradient]="matplotlib,crossterm-integration"
+    [colored_text]="matplotlib,colored-integration"
+    [owo_colors_text]="matplotlib,owo-colors-integration"
+    [termion_gradient]="matplotlib,termion-integration"
+    [cursive_colors]="matplotlib,cursive-integration"
+    [comfy_table_heatmap]="matplotlib,comfy-table-integration"
+    [syntect_highlight]="matplotlib,syntect-integration"
 )
 
 cmd_examples() {
@@ -508,10 +531,26 @@ cmd_info() {
     echo "  d3         7 maps + 1 discrete palette"
     echo "  all        308 colormaps + 70 palettes"
     echo ""
-    echo "  egui-integration       From<Color> for egui types"
-    echo "  plotters-integration   From<Color> for plotters types"
-    echo "  image-integration      From<Color> for image types"
-    echo "  serde-support          Serialize/deserialize types"
+    echo "  egui-integration       egui Color32"
+    echo "  plotters-integration   plotters RGBColor"
+    echo "  image-integration      image Rgb<u8>"
+    echo "  palette-integration    palette Srgb<u8>"
+    echo "  bevy-color-integration bevy_color Srgba"
+    echo "  iced-integration       iced Color"
+    echo "  macroquad-integration  macroquad Color"
+    echo "  tiny-skia-integration  tiny_skia Color"
+    echo "  wgpu-integration       wgpu Color"
+    echo "  slint-integration      slint Color"
+    echo "  ratatui-integration    ratatui Color (TryFrom)"
+    echo "  crossterm-integration  crossterm Color (TryFrom)"
+    echo "  colored-integration    colored Color (TryFrom)"
+    echo "  owo-colors-integration owo_colors Rgb"
+    echo "  termion-integration    termion Rgb"
+    echo "  cursive-integration    cursive Color (TryFrom)"
+    echo "  comfy-table-integration comfy_table Color (TryFrom)"
+    echo "  syntect-integration    syntect Color"
+    echo "  serde-support          Serialize/Deserialize"
+    echo "  all-integrations       all of the above"
 
     hdr "examples"
     echo -e "  ${BOLD}${#ALL_EXAMPLES[@]}${RESET} examples"

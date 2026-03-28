@@ -32,7 +32,7 @@
 | CartoColors | Done | 34 maps + 34 palettes |
 | NCAR NCL | Done | 44 maps |
 | d3 | Done | 7 maps + 1 palette |
-| Framework integrations (egui, plotters, image, serde) | Done | |
+| Framework integrations (19 crates) | Done | |
 | **Total** | | **308 colormaps + 70 palettes** |
 
 ---
@@ -46,7 +46,7 @@
 - **Continuous sampling** -- linear interpolation between 256-step LUT entries for any `t` in `[0, 1]`
 - **Rich metadata** -- every colormap carries its kind, perceptual uniformity flag, CVD safety, and citation
 - **Feature-gated collections** -- include only the maps you need; ~1 KB per colormap
-- **Framework integrations** -- optional support for plotters, egui, image, and serde
+- **Framework integrations** -- bidirectional conversion for 19 crates including plotters, egui, image, bevy, ratatui, iced, palette, and more
 - **Sibling project** -- [chromata](https://github.com/resonant-jovian/chromata) provides editor color themes with the same Color type and integration pattern
 
 ---
@@ -67,7 +67,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.2.0"
+prismatica = "0.3.0"
 ```
 
 Use a colormap:
@@ -206,12 +206,30 @@ let palette = prismatica::find_palette_by_name("Blues").unwrap();
 
 ### Framework integrations
 
-| Feature flag | Framework | Conversion |
-|---|---|---|
-| `plotters-integration` | plotters | `Color` to `RGBColor` |
-| `egui-integration` | egui | `Color` to `Color32` |
-| `image-integration` | image | `Color` to `Rgb<u8>` |
-| `serde-support` | serde | Serialization for `ColormapMeta`, `ColormapKind` |
+All integrations provide bidirectional conversion via `From`/`Into`. Enum-based types use `TryFrom` for the reverse direction. Enable `all-integrations` to get everything.
+
+| Feature flag | Framework | Forward | Reverse |
+|---|---|---|---|
+| `egui-integration` | egui | `Color` -> `Color32` | `Color32` -> `Color` |
+| `plotters-integration` | plotters | `Color` -> `RGBColor` | `RGBColor` -> `Color` |
+| `image-integration` | image | `Color` -> `Rgb<u8>` | `Rgb<u8>` -> `Color` |
+| `palette-integration` | palette | `Color` -> `Srgb<u8>` | `Srgb<u8>` -> `Color` |
+| `bevy-color-integration` | bevy_color | `Color` -> `Srgba` | `Srgba` -> `Color` |
+| `iced-integration` | iced | `Color` -> `iced::Color` | `iced::Color` -> `Color` |
+| `macroquad-integration` | macroquad | `Color` -> `mq::Color` | `mq::Color` -> `Color` |
+| `tiny-skia-integration` | tiny-skia | `Color` -> `ts::Color` | `ts::Color` -> `Color` |
+| `wgpu-integration` | wgpu | `Color` -> `wgpu::Color` | `wgpu::Color` -> `Color` |
+| `slint-integration` | slint | `Color` -> `slint::Color` | `slint::Color` -> `Color` |
+| `ratatui-integration` | ratatui | `Color` -> `Color::Rgb` | `TryFrom` |
+| `crossterm-integration` | crossterm | `Color` -> `Color::Rgb` | `TryFrom` |
+| `colored-integration` | colored | `Color` -> `TrueColor` | `TryFrom` |
+| `owo-colors-integration` | owo-colors | `Color` -> `Rgb` | `Rgb` -> `Color` |
+| `termion-integration` | termion | `Color` -> `Rgb` | `Rgb` -> `Color` |
+| `cursive-integration` | cursive | `Color` -> `Color::Rgb` | `TryFrom` |
+| `comfy-table-integration` | comfy-table | `Color` -> `Color::Rgb` | `TryFrom` |
+| `syntect-integration` | syntect | `Color` -> `hl::Color` | `hl::Color` -> `Color` |
+| `serde-support` | serde | Serialize/Deserialize for meta types | |
+| `all-integrations` | all of the above | | |
 
 ### Binary size
 
@@ -274,6 +292,7 @@ src/
 ├── traits.rs           # Framework conversion traits (feature-gated)
 ├── registry.rs         # all_colormaps(), find_by_name(), filter functions, palette functions
 ├── prelude.rs          # Convenience re-exports
+├── integration/        # Feature-gated framework conversions (19 crates)
 │
 ├── matplotlib/         # Feature: "matplotlib" — 8 maps
 ├── crameri/            # Feature: "crameri" — 40 maps

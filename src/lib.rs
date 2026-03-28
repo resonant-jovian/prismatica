@@ -60,6 +60,21 @@ mod registry;
     feature = "plotters-integration",
     feature = "image-integration",
     feature = "serde-support",
+    feature = "palette-integration",
+    feature = "ratatui-integration",
+    feature = "crossterm-integration",
+    feature = "colored-integration",
+    feature = "owo-colors-integration",
+    feature = "termion-integration",
+    feature = "cursive-integration",
+    feature = "comfy-table-integration",
+    feature = "syntect-integration",
+    feature = "bevy-color-integration",
+    feature = "iced-integration",
+    feature = "macroquad-integration",
+    feature = "tiny-skia-integration",
+    feature = "wgpu-integration",
+    feature = "slint-integration",
 ))]
 mod integration;
 pub use registry::*;

@@ -156,6 +156,22 @@ impl Color {
     }
 }
 
+/// Error returned when a framework color cannot be converted to [`Color`].
+///
+/// This occurs when converting from enum-based color types (e.g., `ratatui::style::Color`)
+/// that have variants other than RGB.
+#[derive(Debug, Clone)]
+pub struct ConversionError {
+    /// Description of why the conversion failed.
+    pub message: &'static str,
+}
+
+impl core::fmt::Display for ConversionError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
 fn srgb_to_linear(c: f64) -> f64 {
     if c <= 0.03928 {
         c / 12.92

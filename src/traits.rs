@@ -8,3 +8,15 @@ pub trait IntoFrameworkColor<T> {
     /// Convert this color into the framework's color type.
     fn into_framework_color(self) -> T;
 }
+
+/// Internal macro to generate `IntoFrameworkColor<T>` impls that delegate to `From`.
+macro_rules! impl_into_framework_color {
+    ($target:ty) => {
+        impl $crate::IntoFrameworkColor<$target> for $crate::Color {
+            fn into_framework_color(self) -> $target {
+                self.into()
+            }
+        }
+    };
+}
+pub(crate) use impl_into_framework_color;

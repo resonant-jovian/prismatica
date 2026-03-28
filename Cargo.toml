@@ -56,6 +56,30 @@ egui-integration = ["dep:egui"]
 plotters-integration = ["dep:plotters"]
 image-integration = ["dep:image"]
 serde-support = ["dep:serde"]
+palette-integration = ["dep:palette"]
+ratatui-integration = ["dep:ratatui"]
+crossterm-integration = ["dep:crossterm"]
+colored-integration = ["dep:colored"]
+owo-colors-integration = ["dep:owo-colors"]
+termion-integration = ["dep:termion"]
+cursive-integration = ["dep:cursive_core"]
+comfy-table-integration = ["dep:comfy-table"]
+syntect-integration = ["dep:syntect"]
+bevy-color-integration = ["dep:bevy_color"]
+iced-integration = ["dep:iced_core"]
+macroquad-integration = ["dep:macroquad"]
+tiny-skia-integration = ["dep:tiny-skia"]
+wgpu-integration = ["dep:wgpu-types"]
+slint-integration = ["dep:slint"]
+
+all-integrations = [
+    "egui-integration", "plotters-integration", "image-integration", "serde-support",
+    "palette-integration", "ratatui-integration", "crossterm-integration",
+    "colored-integration", "owo-colors-integration", "termion-integration",
+    "cursive-integration", "comfy-table-integration", "syntect-integration",
+    "bevy-color-integration", "iced-integration", "macroquad-integration",
+    "tiny-skia-integration", "wgpu-integration", "slint-integration",
+]
 
 [dependencies]
 libm = "0.2.16"
@@ -63,6 +87,21 @@ egui = { version = "0.34.0", optional = true, default-features = false }
 plotters = { version = "0.3.7", optional = true, default-features = false }
 image = { version = "0.25.10", optional = true, default-features = false }
 serde = { version = "1.0.228", optional = true, features = ["derive"] }
+palette = { version = "0.7.6", optional = true, default-features = false, features = ["std"] }
+ratatui = { version = "0.30.0", optional = true, default-features = false }
+crossterm = { version = "0.29.0", optional = true, default-features = false }
+colored = { version = "3.1.1", optional = true, default-features = false }
+owo-colors = { version = "4.3.0", optional = true, default-features = false }
+termion = { version = "4.0.6", optional = true, default-features = false }
+cursive_core = { version = "0.4.6", optional = true, default-features = false }
+comfy-table = { version = "7.2.2", optional = true, default-features = false, features = ["tty"] }
+syntect = { version = "5.3.0", optional = true, default-features = false, features = ["default-themes"] }
+bevy_color = { version = "0.18.1", optional = true, default-features = false, features = ["std"] }
+iced_core = { version = "0.14.0", optional = true, default-features = false }
+macroquad = { version = "0.4.14", optional = true, default-features = false }
+tiny-skia = { version = "0.12.0", optional = true, default-features = false, features = ["std"] }
+wgpu-types = { version = "29.0.1", optional = true, default-features = false }
+slint = { version = "1.15.1", optional = true }
 
 [lints]
 workspace = true
@@ -72,3 +111,19 @@ image = { version = "0.25.10", features = ["png"] }
 insta = "1.42.2"
 plotters = { version = "0.3.7", features = ["svg_backend"] }
 proptest = "1.6.0"
+egui = "0.34.0"
+palette = { version = "0.7.6", features = ["std"] }
+ratatui = "0.30.0"
+crossterm = "0.29.0"
+colored = "3.1.1"
+owo-colors = "4.3.0"
+termion = "4.0.6"
+cursive_core = "0.4.6"
+comfy-table = { version = "7.2.2", features = ["tty"] }
+syntect = { version = "5.3.0", features = ["default-themes"] }
+bevy_color = { version = "0.18.1", features = ["std"] }
+iced_core = "0.14.0"
+macroquad = "0.4.14"
+tiny-skia = { version = "0.12.0", features = ["std"] }
+wgpu-types = "29.0.1"
+slint = "1.15.1"

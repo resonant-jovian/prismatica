@@ -450,6 +450,7 @@ impl DiscretePalette {
 }
 
 #[cfg(test)]
+#[cfg(any(feature = "alloc", feature = "std"))]
 mod tests {
     use super::*;
     use alloc::format;

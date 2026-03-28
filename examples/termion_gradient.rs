@@ -6,10 +6,16 @@
 //!
 //! Run with: `cargo run --example termion_gradient --features "matplotlib,termion-integration"`
 
-use prismatica::matplotlib::VIRIDIS;
-use termion::color;
-
+#[cfg(not(unix))]
 fn main() {
+    eprintln!("termion is only available on Unix platforms.");
+}
+
+#[cfg(unix)]
+fn main() {
+    use prismatica::matplotlib::VIRIDIS;
+    use termion::color;
+
     let n = 48;
 
     println!(

@@ -106,6 +106,9 @@ slint = { version = "1.15.1", optional = true }
 [lints]
 workspace = true
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dev-dependencies]
 image = { version = "0.25.10", features = ["png"] }
 insta = "1.42.2"

@@ -62,14 +62,17 @@ pub fn fetch_url_text(url: &str) -> String {
 
 pub fn float_to_u8(r: f64, g: f64, b: f64) -> [u8; 3] {
     [
-        (r * 255.0).round() as u8,
-        (g * 255.0).round() as u8,
-        (b * 255.0).round() as u8,
+        (r.clamp(0.0, 1.0) * 255.0).round() as u8,
+        (g.clamp(0.0, 1.0) * 255.0).round() as u8,
+        (b.clamp(0.0, 1.0) * 255.0).round() as u8,
     ]
 }
 
 /// Linearly resample a LUT to `n` entries.
 pub fn resample(lut: &[[u8; 3]], n: usize) -> Vec<[u8; 3]> {
+    if n <= 1 {
+        return lut[..n.min(lut.len())].to_vec();
+    }
     let src_len = lut.len() as f64;
     (0..n)
         .map(|i| {

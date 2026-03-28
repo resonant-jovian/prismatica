@@ -49,7 +49,7 @@ mod palette_crate;
 #[cfg(feature = "owo-colors-integration")]
 mod owo_colors;
 
-#[cfg(feature = "termion-integration")]
+#[cfg(all(feature = "termion-integration", unix))]
 mod termion;
 
 #[cfg(feature = "syntect-integration")]

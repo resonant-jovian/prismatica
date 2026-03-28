@@ -4,6 +4,19 @@
 //! framework-specific color types, gated behind optional features.
 
 /// Trait for converting a prismatica [`Color`](crate::Color) to a framework-specific color type.
+///
+/// This trait is implemented for every integration target alongside `From<Color>`.
+/// Most users should prefer `.into()` directly; this trait exists for generic
+/// contexts where the target type cannot be inferred.
+///
+/// # Examples
+///
+/// ```ignore
+/// use prismatica::{Color, IntoFrameworkColor};
+///
+/// let color = Color::new(255, 128, 0);
+/// let rgb: plotters::style::RGBColor = color.into_framework_color();
+/// ```
 pub trait IntoFrameworkColor<T> {
     /// Convert this color into the framework's color type.
     fn into_framework_color(self) -> T;

@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `all-integrations` meta-feature flag
 - `impl_into_framework_color!` internal macro for integration boilerplate
 - Conversion helpers: `u8_to_f32`, `f32_to_u8`, `u8_to_f64`, `f64_to_u8`
-- 16 new examples (one per integration)
+- 22 examples: 18 integration examples + 4 general-purpose examples
 - Full inline documentation with examples for all integration modules
 
 ### Changed

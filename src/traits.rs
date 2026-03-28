@@ -23,6 +23,26 @@ pub trait IntoFrameworkColor<T> {
 }
 
 /// Internal macro to generate `IntoFrameworkColor<T>` impls that delegate to `From`.
+#[cfg(any(
+    feature = "egui-integration",
+    feature = "plotters-integration",
+    feature = "image-integration",
+    feature = "palette-integration",
+    feature = "ratatui-integration",
+    feature = "crossterm-integration",
+    feature = "colored-integration",
+    feature = "owo-colors-integration",
+    feature = "termion-integration",
+    feature = "cursive-integration",
+    feature = "comfy-table-integration",
+    feature = "syntect-integration",
+    feature = "bevy-color-integration",
+    feature = "iced-integration",
+    feature = "macroquad-integration",
+    feature = "tiny-skia-integration",
+    feature = "wgpu-integration",
+    feature = "slint-integration",
+))]
 macro_rules! impl_into_framework_color {
     ($target:ty) => {
         impl $crate::IntoFrameworkColor<$target> for $crate::Color {
@@ -32,4 +52,24 @@ macro_rules! impl_into_framework_color {
         }
     };
 }
+#[cfg(any(
+    feature = "egui-integration",
+    feature = "plotters-integration",
+    feature = "image-integration",
+    feature = "palette-integration",
+    feature = "ratatui-integration",
+    feature = "crossterm-integration",
+    feature = "colored-integration",
+    feature = "owo-colors-integration",
+    feature = "termion-integration",
+    feature = "cursive-integration",
+    feature = "comfy-table-integration",
+    feature = "syntect-integration",
+    feature = "bevy-color-integration",
+    feature = "iced-integration",
+    feature = "macroquad-integration",
+    feature = "tiny-skia-integration",
+    feature = "wgpu-integration",
+    feature = "slint-integration",
+))]
 pub(crate) use impl_into_framework_color;

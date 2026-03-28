@@ -72,6 +72,8 @@ tiny-skia-integration = ["dep:tiny-skia"]
 wgpu-integration = ["dep:wgpu-types"]
 slint-integration = ["dep:slint"]
 
+# Note: termion-integration is excluded because termion is unix-only.
+# On unix, add termion-integration separately if needed.
 all-integrations = [
     "egui-integration", "plotters-integration", "image-integration", "serde-support",
     "palette-integration", "ratatui-integration", "crossterm-integration",

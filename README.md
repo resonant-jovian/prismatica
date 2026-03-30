@@ -67,7 +67,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.3.0"
+prismatica = "0.3.1"
 ```
 
 Use a colormap:
@@ -127,7 +127,7 @@ pub struct Color {
 }
 ```
 
-Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`.
+Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `from_css_hex("#ff8800")`, `from_f32(r, g, b)`, `to_hex()`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`. Implements `Display` (CSS hex), `Default` (black), `From<[u8; 3]>`, and `From<(u8, u8, u8)>`.
 
 ### Colormap sampling
 
@@ -165,7 +165,7 @@ let diverging: Vec<_> = all_colormaps()
     .collect();
 
 // Look up by name
-let viridis = find_by_name("viridis").unwrap();
+let viridis = find_by_name("viridis").expect("viridis should exist");
 
 // Filter by collection
 let crameri_maps = filter_by_collection("crameri");
@@ -184,7 +184,7 @@ for i in 0..SET2_PALETTE.len() {
 }
 
 // Also available via the registry
-let palette = prismatica::find_palette_by_name("Blues").unwrap();
+let palette = prismatica::find_palette_by_name("Blues").expect("Blues should exist");
 ```
 
 ### Feature flags

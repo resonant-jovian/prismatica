@@ -61,6 +61,28 @@ proptest! {
     }
 }
 
+#[cfg(any(feature = "alloc", feature = "std"))]
+proptest! {
+    #[test]
+    fn from_css_hex_roundtrip(r in 0u8..=255, g in 0u8..=255, b in 0u8..=255) {
+        let c = Color::new(r, g, b);
+        let hex = c.to_css_hex();
+        let parsed = Color::from_css_hex(&hex).expect("roundtrip should succeed");
+        assert_eq!(parsed, c);
+    }
+
+    #[test]
+    fn from_f32_near_roundtrip(r in 0u8..=255, g in 0u8..=255, b in 0u8..=255) {
+        let c = Color::new(r, g, b);
+        let (fr, fg, fb) = c.to_f32();
+        let back = Color::from_f32(fr, fg, fb);
+        // Allow +/-1 tolerance for floating-point rounding
+        assert!((back.r as i16 - c.r as i16).abs() <= 1, "r: {} vs {}", back.r, c.r);
+        assert!((back.g as i16 - c.g as i16).abs() <= 1, "g: {} vs {}", back.g, c.g);
+        assert!((back.b as i16 - c.b as i16).abs() <= 1, "b: {} vs {}", back.b, c.b);
+    }
+}
+
 #[cfg(feature = "matplotlib")]
 proptest! {
     #[test]

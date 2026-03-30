@@ -466,6 +466,58 @@ mod registry_tests {
     }
 }
 
+#[cfg(feature = "colorbrewer")]
+#[test]
+fn discrete_palette_wrapping_at_multiples() {
+    let p = prismatica::colorbrewer::SET2_PALETTE;
+    let n = p.len();
+    for i in 0..n {
+        assert_eq!(p.get(i), p.get(i + n));
+        assert_eq!(p.get(i), p.get(i + 2 * n));
+        assert_eq!(p.get(i), p.get(i + 3 * n));
+    }
+}
+
+#[cfg(feature = "ratatui-integration")]
+#[test]
+fn ratatui_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = ratatui::style::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "crossterm-integration")]
+#[test]
+fn crossterm_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = crossterm::style::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "colored-integration")]
+#[test]
+fn colored_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = colored::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "comfy-table-integration")]
+#[test]
+fn comfy_table_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = comfy_table::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "cursive-integration")]
+#[test]
+fn cursive_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = cursive_core::theme::Color::Dark(cursive_core::theme::BaseColor::Red);
+    assert!(Color::try_from(named).is_err());
+}
+
 #[cfg(all(feature = "all", feature = "std"))]
 mod full_registry_tests {
     use prismatica::*;

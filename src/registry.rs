@@ -84,7 +84,9 @@ fn for_each_discrete_palette(mut f: impl FnMut(&'static DiscretePalette)) {
 /// let maps = all_colormaps();
 /// assert!(!maps.is_empty());
 /// ```
+#[must_use]
 #[cfg(any(feature = "alloc", feature = "std"))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
 pub fn all_colormaps() -> Vec<&'static Colormap> {
     let mut result = Vec::new();
     for_each_colormap(|cm| result.push(cm));
@@ -101,6 +103,7 @@ pub fn all_colormaps() -> Vec<&'static Colormap> {
 /// assert_eq!(batlow.meta.name, "batlow");
 /// assert!(find_by_name("nonexistent").is_none());
 /// ```
+#[must_use]
 pub fn find_by_name(name: &str) -> Option<&'static Colormap> {
     let mut found = None;
     for_each_colormap(|cm| {
@@ -120,7 +123,9 @@ pub fn find_by_name(name: &str) -> Option<&'static Colormap> {
 /// let sequential = filter_by_kind(ColormapKind::Sequential);
 /// assert!(sequential.iter().all(|cm| cm.meta.kind == ColormapKind::Sequential));
 /// ```
+#[must_use]
 #[cfg(any(feature = "alloc", feature = "std"))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
 pub fn filter_by_kind(kind: ColormapKind) -> Vec<&'static Colormap> {
     let mut result = Vec::new();
     for_each_colormap(|cm| {
@@ -140,7 +145,9 @@ pub fn filter_by_kind(kind: ColormapKind) -> Vec<&'static Colormap> {
 /// let crameri = filter_by_collection("crameri");
 /// assert!(crameri.iter().all(|cm| cm.meta.collection == "crameri"));
 /// ```
+#[must_use]
 #[cfg(any(feature = "alloc", feature = "std"))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
 pub fn filter_by_collection(collection: &str) -> Vec<&'static Colormap> {
     let mut result = Vec::new();
     for_each_colormap(|cm| {
@@ -162,7 +169,9 @@ pub fn filter_by_collection(collection: &str) -> Vec<&'static Colormap> {
 ///     assert!(!p.is_empty());
 /// }
 /// ```
+#[must_use]
 #[cfg(any(feature = "alloc", feature = "std"))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
 pub fn all_discrete_palettes() -> Vec<&'static DiscretePalette> {
     let mut result = Vec::new();
     for_each_discrete_palette(|p| result.push(p));
@@ -173,11 +182,12 @@ pub fn all_discrete_palettes() -> Vec<&'static DiscretePalette> {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// use prismatica::find_palette_by_name;
 /// let set2 = find_palette_by_name("Set2").expect("Set2 should exist");
 /// assert_eq!(set2.meta.collection, "colorbrewer");
 /// ```
+#[must_use]
 pub fn find_palette_by_name(name: &str) -> Option<&'static DiscretePalette> {
     let mut found = None;
     for_each_discrete_palette(|p| {

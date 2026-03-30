@@ -15,6 +15,7 @@ edition = "2024"
 rust-version = "1.85"
 description = "308 scientific colormaps as compile-time Rust constants"
 license = "GPL-3.0-only"
+authors = ["Albin Sjögren <albin@sjoegren.se>"]
 repository = "https://github.com/resonant-jovian/prismatica"
 documentation = "https://docs.rs/prismatica"
 readme = "README.md"
@@ -103,6 +104,7 @@ iced_core = { version = "0.14.0", optional = true, default-features = false }
 macroquad = { version = "0.4.14", optional = true, default-features = false }
 tiny-skia = { version = "0.12.0", optional = true, default-features = false, features = ["std"] }
 wgpu-types = { version = "29.0.1", optional = true, default-features = false }
+# slint requires default features for Color type availability
 slint = { version = "1.15.1", optional = true }
 
 [lints]
@@ -110,8 +112,10 @@ workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
 image = { version = "0.25.10", features = ["png"] }
 insta = "1.42.2"
 plotters = { version = "0.3.7", features = ["svg_backend"] }
@@ -138,3 +142,8 @@ termion = { version = "4.0.6", optional = true, default-features = false }
 
 [target.'cfg(unix)'.dev-dependencies]
 termion = "4.0.6"
+
+[[bench]]
+name = "colormaps"
+harness = false
+required-features = ["colorbrewer"]

@@ -40,7 +40,7 @@
 //! | `iced-integration` | iced | `iced::Color` |
 //! | `macroquad-integration` | macroquad | `macroquad::Color` |
 //! | `tiny-skia-integration` | tiny-skia | `tiny_skia::Color` |
-//! | `wgpu-integration` | wgpu | `wgpu::Color` |
+//! | `wgpu-integration` | wgpu-types | `wgpu_types::Color` |
 //! | `slint-integration` | slint | `slint::Color` |
 //! | `ratatui-integration` | ratatui | `ratatui::Color` |
 //! | `crossterm-integration` | crossterm | `crossterm::Color` |
@@ -51,7 +51,11 @@
 //! | `comfy-table-integration` | comfy-table | `comfy_table::Color` |
 //! | `syntect-integration` | syntect | `syntect::Color` |
 //! | `serde-support` | serde | Serialize/Deserialize |
-//! | `all-integrations` | all of the above | |
+//! | `all-integrations` | all of the above (except termion, which is Unix-only) | |
+//!
+//! **Note:** `palette-integration`, `bevy-color-integration`, `tiny-skia-integration`,
+//! and `slint-integration` pull in `std` via their upstream dependencies and are not
+//! compatible with `no_std` targets.
 //!
 //! ## Choosing a Colormap
 //!
@@ -71,6 +75,8 @@
 #![no_std]
 #![forbid(unsafe_code)]
 #![deny(clippy::unwrap_used)]
+#![warn(missing_docs)]
+#![warn(unreachable_pub)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 #[cfg(feature = "alloc")]
@@ -112,31 +118,41 @@ pub use registry::*;
 // -- Collection modules (feature-gated) --
 
 #[cfg(feature = "matplotlib")]
+#[cfg_attr(docsrs, doc(cfg(feature = "matplotlib")))]
 pub mod matplotlib;
 
 #[cfg(feature = "crameri")]
+#[cfg_attr(docsrs, doc(cfg(feature = "crameri")))]
 pub mod crameri;
 
 #[cfg(feature = "cet")]
+#[cfg_attr(docsrs, doc(cfg(feature = "cet")))]
 pub mod cet;
 
 #[cfg(feature = "cmocean")]
+#[cfg_attr(docsrs, doc(cfg(feature = "cmocean")))]
 pub mod cmocean;
 
 #[cfg(feature = "colorbrewer")]
+#[cfg_attr(docsrs, doc(cfg(feature = "colorbrewer")))]
 pub mod colorbrewer;
 
 #[cfg(feature = "cmasher")]
+#[cfg_attr(docsrs, doc(cfg(feature = "cmasher")))]
 pub mod cmasher;
 
 #[cfg(feature = "ncar")]
+#[cfg_attr(docsrs, doc(cfg(feature = "ncar")))]
 pub mod ncar;
 
 #[cfg(feature = "cartocolors")]
+#[cfg_attr(docsrs, doc(cfg(feature = "cartocolors")))]
 pub mod cartocolors;
 
 #[cfg(feature = "moreland")]
+#[cfg_attr(docsrs, doc(cfg(feature = "moreland")))]
 pub mod moreland;
 
 #[cfg(feature = "d3")]
+#[cfg_attr(docsrs, doc(cfg(feature = "d3")))]
 pub mod d3;

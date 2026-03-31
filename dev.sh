@@ -458,7 +458,8 @@ TOOL_REGISTRY=(
     "clippy:cargo-clippy:rustup component add clippy:required"
     "rustfmt:rustfmt:rustup component add rustfmt:required"
     "cargo-insta:cargo-insta:cargo install cargo-insta:recommended"
-    "cargo-semver-checks:cargo-semver-checks:cargo install cargo-semver-checks:optional"
+    "cargo-semver-checks:cargo-semver-checks:cargo install cargo-semver-checks:recommended"
+    "cargo-deny:cargo-deny:cargo install cargo-deny:recommended"
 )
 
 check_tool() {

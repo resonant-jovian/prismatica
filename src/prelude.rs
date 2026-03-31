@@ -13,7 +13,8 @@ pub use crate::IntoFrameworkColor;
 pub use crate::find_by_name;
 pub use crate::find_palette_by_name;
 pub use crate::{
-    Color, Colormap, ColormapKind, ColormapMeta, ConversionError, DiscretePalette, ReversedColormap,
+    Color, Colormap, ColormapKind, ColormapMeta, ConversionError, DiscretePalette, ParseColorError,
+    ReversedColormap,
 };
 
 #[cfg(any(feature = "alloc", feature = "std"))]

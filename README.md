@@ -19,8 +19,8 @@
 
 **The universal compile-time scientific colormap library for Rust**
 
-> [!IMPORTANT]
-> Pre-1.0.0 — the API may change between minor versions. The API will be considered stable at 1.0.0.
+> [!TIP]
+> The API is stable. Prismatica follows [Semantic Versioning](https://semver.org/) -- breaking changes require a major version bump.
 
 ---
 
@@ -76,7 +76,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.3.1"
+prismatica = "1.0.0"
 ```
 
 Use a colormap:
@@ -136,7 +136,7 @@ pub struct Color {
 }
 ```
 
-Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `from_css_hex("#ff8800")`, `from_f32(r, g, b)`, `to_hex()`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`. Implements `Display` (CSS hex), `Default` (black), `From<[u8; 3]>`, and `From<(u8, u8, u8)>`.
+Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `from_css_hex("#ff8800")` (also 3-digit: `"#FFF"`), `from_f32(r, g, b)`, `to_hex()`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`. Implements `Display` (CSS hex), `Default` (black), `Ord` (lexicographic r,g,b), `FromStr` (`"#ff8800".parse()`), `From<u32>`, `From<[u8; 3]>`, and `From<(u8, u8, u8)>`. `from_css_hex` is `const fn`.
 
 ### Colormap sampling
 
@@ -361,7 +361,7 @@ To add a new collection:
 cargo test                                         # All tests (unit + integration)
 cargo test --all-features                          # With all collections enabled
 cargo check --no-default-features --features core  # Verify no_std compatibility
-cargo clippy -- -W clippy::all                     # Lint
+cargo clippy --all-targets --all-features -- -D warnings  # Lint
 cargo test --test property --features all          # Property-based tests (proptest)
 cargo test --test snapshots --features all         # Snapshot tests (insta)
 ```
@@ -374,6 +374,8 @@ Snapshot tests use [insta](https://insta.rs/) to detect codegen changes. After m
 #![no_std]
 #![forbid(unsafe_code)]
 #![deny(clippy::unwrap_used)]
+#![warn(missing_docs)]
+#![warn(unreachable_pub)]
 ```
 
 ---

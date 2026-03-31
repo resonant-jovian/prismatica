@@ -84,6 +84,30 @@ mod matplotlib_tests {
     }
 }
 
+#[cfg(feature = "matplotlib")]
+mod eval_rational_edge_cases {
+    #[test]
+    fn eval_rational_n_zero() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // n=0 is documented to return eval(0.0)
+        assert_eq!(cm.eval_rational(0, 0), cm.eval(0.0));
+    }
+
+    #[test]
+    fn eval_rational_n_one() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // n=1 is documented to return eval(0.0)
+        assert_eq!(cm.eval_rational(0, 1), cm.eval(0.0));
+    }
+
+    #[test]
+    fn eval_rational_i_exceeds_n_when_n_one() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // When n<=1, i is ignored and eval(0.0) is returned
+        assert_eq!(cm.eval_rational(5, 1), cm.eval(0.0));
+    }
+}
+
 #[cfg(feature = "crameri")]
 mod crameri_tests {
     use super::*;

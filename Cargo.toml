@@ -10,7 +10,7 @@ unsafe_code = "forbid"
 
 [package]
 name = "prismatica"
-version = "0.3.1"
+version = "1.0.0"
 edition = "2024"
 rust-version = "1.85"
 description = "308 scientific colormaps as compile-time Rust constants"

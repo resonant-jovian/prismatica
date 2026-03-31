@@ -95,6 +95,10 @@ pub fn all_colormaps() -> Vec<&'static Colormap> {
 
 /// Look up a colormap by its canonical name (case-sensitive).
 ///
+/// Names use their original casing from upstream sources (e.g.,
+/// `"batlowK"`, `"romaO"`, `"viridis"`). Most names are lowercase,
+/// but Crameri maps with suffixes preserve mixed case.
+///
 /// # Examples
 ///
 /// ```
@@ -179,6 +183,9 @@ pub fn all_discrete_palettes() -> Vec<&'static DiscretePalette> {
 }
 
 /// Look up a discrete palette by its canonical name (case-sensitive).
+///
+/// Names use their original casing from upstream sources (e.g.,
+/// `"Set2"`, `"Tableau10"`).
 ///
 /// # Examples
 ///

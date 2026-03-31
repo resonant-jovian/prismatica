@@ -1,5 +1,8 @@
 /// An sRGB color with 8-bit channels.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+///
+/// Ordering is lexicographic by `(r, g, b)` -- red-major.
+#[must_use]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
@@ -30,7 +33,6 @@ impl Color {
     /// let orange = Color::new(255, 165, 0);
     /// assert_eq!(orange.r, 255);
     /// ```
-    #[must_use]
     pub const fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
     }
@@ -46,7 +48,6 @@ impl Color {
     /// let orange = Color::from_hex(0xFF8800);
     /// assert_eq!(orange, Color::new(255, 136, 0));
     /// ```
-    #[must_use]
     pub const fn from_hex(hex: u32) -> Self {
         Self {
             r: ((hex >> 16) & 0xFF) as u8,
@@ -86,9 +87,12 @@ impl Color {
         alloc::format!("#{:02x}{:02x}{:02x}", self.r, self.g, self.b)
     }
 
-    /// Parse a CSS hex color string (e.g., `"#ff8800"` or `"ff8800"`).
+    /// Parse a CSS hex color string.
     ///
-    /// Accepts exactly 6 hex digits with an optional leading `#`.
+    /// Accepts 6-digit (`"#ff8800"`, `"ff8800"`) and 3-digit shorthand
+    /// (`"#FFF"`, `"FFF"`) formats. The 3-digit form expands each digit
+    /// (e.g., `#ABC` becomes `#AABBCC`).
+    ///
     /// Returns `None` if the string is not a valid hex color.
     ///
     /// # Examples
@@ -97,16 +101,51 @@ impl Color {
     /// use prismatica::Color;
     /// assert_eq!(Color::from_css_hex("#ff8800"), Some(Color::new(255, 136, 0)));
     /// assert_eq!(Color::from_css_hex("ff8800"), Some(Color::new(255, 136, 0)));
+    /// assert_eq!(Color::from_css_hex("#FFF"), Some(Color::new(255, 255, 255)));
     /// assert_eq!(Color::from_css_hex("invalid"), None);
     /// ```
-    #[must_use]
-    pub fn from_css_hex(s: &str) -> Option<Self> {
-        let hex = s.strip_prefix('#').unwrap_or(s);
-        if hex.len() != 6 {
-            return None;
+    pub const fn from_css_hex(s: &str) -> Option<Self> {
+        let bytes = s.as_bytes();
+
+        let (start, hex_len) = if !bytes.is_empty() && bytes[0] == b'#' {
+            (1, bytes.len() - 1)
+        } else {
+            (0, bytes.len())
+        };
+
+        match hex_len {
+            6 => {
+                let (r_hi, r_lo) = (hex_digit(bytes[start]), hex_digit(bytes[start + 1]));
+                let (g_hi, g_lo) = (hex_digit(bytes[start + 2]), hex_digit(bytes[start + 3]));
+                let (b_hi, b_lo) = (hex_digit(bytes[start + 4]), hex_digit(bytes[start + 5]));
+
+                match (r_hi, r_lo, g_hi, g_lo, b_hi, b_lo) {
+                    (Some(rh), Some(rl), Some(gh), Some(gl), Some(bh), Some(bl)) => Some(Color {
+                        r: rh << 4 | rl,
+                        g: gh << 4 | gl,
+                        b: bh << 4 | bl,
+                    }),
+                    _ => None,
+                }
+            }
+            3 => {
+                let (r, g, b) = (
+                    hex_digit(bytes[start]),
+                    hex_digit(bytes[start + 1]),
+                    hex_digit(bytes[start + 2]),
+                );
+
+                match (r, g, b) {
+                    (Some(r), Some(g), Some(b)) => Some(Color {
+                        r: r << 4 | r,
+                        g: g << 4 | g,
+                        b: b << 4 | b,
+                    }),
+                    _ => None,
+                }
+            }
+            _ => None,
         }
-        let val = u32::from_str_radix(hex, 16).ok()?;
-        Some(Self::from_hex(val))
     }
 
     /// Convert to floating-point RGB in `[0.0, 1.0]`.
@@ -130,8 +169,8 @@ impl Color {
 
     /// Create a color from floating-point RGB in `[0.0, 1.0]`.
     ///
-    /// Values outside `[0.0, 1.0]` are clamped. This is the inverse
-    /// of [`to_f32`](Self::to_f32).
+    /// Values outside `[0.0, 1.0]` are clamped. NaN produces 0 for the
+    /// affected channel. This is the inverse of [`to_f32`](Self::to_f32).
     ///
     /// # Examples
     ///
@@ -140,7 +179,6 @@ impl Color {
     /// let c = Color::from_f32(1.0, 0.5, 0.0);
     /// assert_eq!(c, Color::new(255, 128, 0));
     /// ```
-    #[must_use]
     pub fn from_f32(r: f32, g: f32, b: f32) -> Self {
         Self {
             r: (r.clamp(0.0, 1.0) * 255.0 + 0.5) as u8,
@@ -203,7 +241,6 @@ impl Color {
     /// let mid = black.lerp(white, 0.5);
     /// assert_eq!(mid, Color::new(127, 127, 127));
     /// ```
-    #[must_use]
     pub fn lerp(self, other: Color, t: f32) -> Color {
         let t = t.clamp(0.0, 1.0);
         Color {
@@ -218,6 +255,15 @@ impl Default for Color {
     /// Returns black (`Color::new(0, 0, 0)`).
     fn default() -> Self {
         Self::new(0, 0, 0)
+    }
+}
+
+impl From<u32> for Color {
+    /// Construct a Color from a 24-bit hex value (0xRRGGBB).
+    ///
+    /// Only the lower 24 bits are used; upper bits are silently ignored.
+    fn from(hex: u32) -> Self {
+        Self::from_hex(hex)
     }
 }
 
@@ -276,6 +322,48 @@ impl core::fmt::Display for ConversionError {
 }
 
 impl core::error::Error for ConversionError {}
+
+/// Error returned when parsing a [`Color`] from a string fails.
+///
+/// Returned by `"#xyz".parse::<Color>()` when the input is not a valid
+/// 3-digit or 6-digit CSS hex color.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParseColorError;
+
+impl core::fmt::Display for ParseColorError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("invalid CSS hex color (expected #RGB, RGB, #RRGGBB, or RRGGBB)")
+    }
+}
+
+impl core::error::Error for ParseColorError {}
+
+/// Parse a CSS hex color string like `"#ff8800"`, `"ff8800"`, `"#FFF"`, or `"FFF"`.
+///
+/// # Examples
+///
+/// ```
+/// use prismatica::Color;
+///
+/// let c: Color = "#ff8800".parse().unwrap();
+/// assert_eq!(c, Color::from_hex(0xFF8800));
+/// ```
+impl core::str::FromStr for Color {
+    type Err = ParseColorError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::from_css_hex(s).ok_or(ParseColorError)
+    }
+}
+
+const fn hex_digit(b: u8) -> Option<u8> {
+    match b {
+        b'0'..=b'9' => Some(b - b'0'),
+        b'a'..=b'f' => Some(b - b'a' + 10),
+        b'A'..=b'F' => Some(b - b'A' + 10),
+        _ => None,
+    }
+}
 
 fn srgb_to_linear(c: f64) -> f64 {
     if c <= 0.03928 {
@@ -373,7 +461,6 @@ impl Colormap {
     /// let color = BATLOW.eval(0.5);
     /// assert!(color.r <= 255);
     /// ```
-    #[must_use]
     pub fn eval(&self, t: f32) -> Color {
         debug_assert!(!self.lut.is_empty(), "Colormap LUT must not be empty");
         let t = t.clamp(0.0, 1.0);
@@ -409,7 +496,6 @@ impl Colormap {
     /// // The 5th of 10 evenly-spaced samples
     /// let color = BATLOW.eval_rational(5, 10);
     /// ```
-    #[must_use]
     pub fn eval_rational(&self, i: usize, n: usize) -> Color {
         if n <= 1 {
             return self.eval(0.0);
@@ -516,7 +602,6 @@ impl ReversedColormap<'_> {
     /// let rev = BATLOW.reversed();
     /// assert_eq!(rev.eval(0.0), BATLOW.eval(1.0));
     /// ```
-    #[must_use]
     pub fn eval(&self, t: f32) -> Color {
         self.inner.eval(1.0 - t)
     }
@@ -533,7 +618,6 @@ impl ReversedColormap<'_> {
     /// let rev = BATLOW.reversed();
     /// assert_eq!(rev.eval_rational(0, 3), BATLOW.eval_rational(2, 3));
     /// ```
-    #[must_use]
     pub fn eval_rational(&self, i: usize, n: usize) -> Color {
         if n <= 1 {
             return self.eval(0.0);
@@ -652,7 +736,6 @@ impl DiscretePalette {
     /// // Wraps around: index 8 == index 0 for an 8-color palette
     /// assert_eq!(SET2_PALETTE.get(SET2_PALETTE.len()), first);
     /// ```
-    #[must_use]
     pub fn get(&self, i: usize) -> Color {
         let [r, g, b] = self.colors[i % self.colors.len()];
         Color::new(r, g, b)
@@ -1016,11 +1099,43 @@ mod tests {
     }
 
     #[test]
+    fn color_from_css_hex_3digit() {
+        assert_eq!(Color::from_css_hex("#FFF"), Some(Color::new(255, 255, 255)));
+        assert_eq!(Color::from_css_hex("000"), Some(Color::new(0, 0, 0)));
+        assert_eq!(
+            Color::from_css_hex("#ABC"),
+            Some(Color::new(0xAA, 0xBB, 0xCC))
+        );
+    }
+
+    #[test]
     fn color_from_css_hex_invalid() {
         assert_eq!(Color::from_css_hex("#gg0000"), None);
-        assert_eq!(Color::from_css_hex("#fff"), None);
         assert_eq!(Color::from_css_hex(""), None);
         assert_eq!(Color::from_css_hex("#1234567"), None);
+        assert_eq!(Color::from_css_hex("#zz"), None);
+    }
+
+    #[test]
+    fn color_from_u32() {
+        let c: Color = 0xFF8800u32.into();
+        assert_eq!(c, Color::new(255, 136, 0));
+    }
+
+    #[test]
+    fn color_from_str_valid() {
+        let c: Color = "#ff8800".parse().expect("valid hex");
+        assert_eq!(c, Color::new(255, 136, 0));
+
+        let c: Color = "FFF".parse().expect("valid 3-digit hex");
+        assert_eq!(c, Color::new(255, 255, 255));
+    }
+
+    #[test]
+    fn color_from_str_invalid() {
+        let err = "nope".parse::<Color>();
+        assert!(err.is_err());
+        assert_eq!(err.expect_err("should fail"), ParseColorError);
     }
 
     #[test]

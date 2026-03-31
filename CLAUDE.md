@@ -13,7 +13,7 @@ cargo test --lib                                   # Unit tests only
 cargo test --test colormaps                        # Integration tests only
 cargo test registry_tests::find_by_name_works      # Single test by name
 cargo fmt --all                                    # Format all code
-cargo clippy --all-targets --all-features -- -W clippy::all  # Lint everything
+cargo clippy --all-targets --all-features -- -D warnings     # Lint everything
 cargo run -p xtask -- all                          # Fetch upstream data + generate Rust source
 cargo run -p xtask -- fetch                        # Fetch upstream colormap data only
 cargo run -p xtask -- generate                     # Generate Rust source from data/ only
@@ -41,11 +41,11 @@ Prismatica is a `#![no_std]` Rust crate providing 308 scientific colormaps + 70 
 
 ### Core library (`src/`)
 
-- **`types.rs`** — All public types: `Color` (sRGB u8), `Colormap` (metadata + `&'static [[u8; 3]]` LUT), `ColormapKind` (Sequential/Diverging/Cyclic/Qualitative/MultiSequential), `ColormapMeta`, `ReversedColormap`, `DiscretePalette`, `ConversionError`
+- **`types.rs`** — All public types: `Color` (sRGB u8, derives `Ord`), `Colormap` (metadata + `&'static [[u8; 3]]` LUT), `ColormapKind` (Sequential/Diverging/Cyclic/Qualitative/MultiSequential), `ColormapMeta`, `ReversedColormap`, `DiscretePalette`, `ConversionError`
 - **`registry.rs`** — Discovery API: `find_by_name()` (no alloc), `all_colormaps()`/`filter_by_kind()`/`filter_by_collection()` (alloc-gated). Uses a `for_each_colormap()` helper that iterates feature-gated collection `ALL` slices — new collections must be added here
 - **`traits.rs`** — `IntoFrameworkColor<T>` trait + `impl_into_framework_color!` macro for integration boilerplate
 - **`integration/`** — Bidirectional `From<Color>`/`From<FrameworkType>` + `IntoFrameworkColor` impls for 19 crates, plus serde derives. See Integration Pattern below.
-- **`lib.rs`** — `#![no_std]`, `#![forbid(unsafe_code)]`, `#![deny(clippy::unwrap_used)]`, `extern crate alloc`, module declarations with `#[cfg(feature)]` gates, re-exports
+- **`lib.rs`** — `#![no_std]`, `#![forbid(unsafe_code)]`, `#![deny(clippy::unwrap_used)]`, `#![warn(missing_docs)]`, `#![warn(unreachable_pub)]`, conditional `extern crate alloc`, module declarations with `#[cfg(feature)]` gates, re-exports
 
 ### Integration pattern (`src/integration/`)
 
@@ -93,5 +93,7 @@ Methods gated on alloc use `#[cfg(any(feature = "alloc", feature = "std"))]` and
 - The `meta.name` field preserves original mixed case: `"batlowK"`, `"romaO"`
 - Tests run with `--test-threads=1` in CI
 - Reference value tests allow +/-2-3 tolerance due to resampling from upstream sources
-- `Color` has WCAG methods (`luminance()`, `contrast_ratio()`) using `libm` for no_std `pow()` — matches chromata's identical implementation
+- `Color` has `#[must_use]` on the struct, `Ord`/`PartialOrd` (lexicographic r,g,b), and WCAG methods (`luminance()`, `contrast_ratio()`) using `libm` for no_std `pow()` — matches chromata's identical implementation
+- `from_css_hex()` is `const fn` and supports both 3-digit (`#FFF`) and 6-digit (`#FFFFFF`) CSS hex formats
+- `find_by_name()` / `find_palette_by_name()` are case-sensitive; names use original casing (e.g., `"batlowK"`, `"romaO"`)
 - Sibling project: chromata (editor themes) uses the same Color type, traits, integration pattern, and lint attributes

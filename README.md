@@ -1,17 +1,26 @@
-# prismatica
+<div align="center">
+
+<h1>prismatica</h1>
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-resonant--jovian-ea4aaa?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/resonant-jovian)
+[![Support on thanks.dev](https://img.shields.io/badge/thanks.dev-Support-green?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyMWMtNS41IDAtMTAtMy41LTEwLTkgMC00IDItNy41IDYtMTAgMS41IDIuNSAzIDQuNSA0IDQuNSAxLTEuNSAyLjUtMy41IDQtNC41IDQuNSAyLjUgNiA2IDYgMTAgMCA1LjUtNC41IDktMTAgOXoiLz48L3N2Zz4=)](https://thanks.dev/u/gh/resonant-jovian)
+
+[![Crates.io](https://img.shields.io/crates/v/prismatica?style=for-the-badge&logo=rust&logoColor=white&label=crates.io)](https://crates.io/crates/prismatica)
+[![docs.rs](https://img.shields.io/docsrs/prismatica?style=for-the-badge&logo=docsdotrs&logoColor=white&label=docs.rs)](https://docs.rs/prismatica)
+[![Downloads](https://img.shields.io/crates/d/prismatica?style=for-the-badge&logo=rust&logoColor=white&color=e6761b)](https://crates.io/crates/prismatica)
+
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-3366cc?style=for-the-badge&logo=gnu&logoColor=white)](https://www.gnu.org/licenses/gpl-3.0)
+[![MSRV](https://img.shields.io/badge/MSRV-1.85-3366cc?style=for-the-badge&logo=rust&logoColor=white)](https://releases.rs/docs/1.85.0/)
+[![Edition](https://img.shields.io/badge/Edition-2024-3366cc?style=for-the-badge&logo=rust&logoColor=white)](https://doc.rust-lang.org/edition-guide/)
+
+[![CI](https://img.shields.io/github/actions/workflow/status/resonant-jovian/prismatica/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=ci)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
+
+</div>
 
 **The universal compile-time scientific colormap library for Rust**
 
-[![Crates.io](https://img.shields.io/crates/v/prismatica.svg)](https://crates.io/crates/prismatica)
-[![docs.rs](https://docs.rs/prismatica/badge.svg)](https://docs.rs/prismatica)
-[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Support on thanks.dev](https://img.shields.io/badge/Support-thanks.dev-green)](https://thanks.dev/u/gh/resonant-jovian)
-
-[![CI](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml/badge.svg)](https://github.com/resonant-jovian/prismatica/actions/workflows/ci.yml)
-[![MSRV](https://img.shields.io/badge/MSRV-1.85-blue.svg)]()
-
-> [!IMPORTANT]
-> Pre-1.0.0 — the API may change between minor versions. The API will be considered stable at 1.0.0.
+> [!TIP]
+> The API is stable. Prismatica follows [Semantic Versioning](https://semver.org/) -- breaking changes require a major version bump.
 
 ---
 
@@ -67,7 +76,7 @@ Add prismatica to your project:
 
 ```toml
 [dependencies]
-prismatica = "0.3.0"
+prismatica = "1.0.0"
 ```
 
 Use a colormap:
@@ -127,7 +136,7 @@ pub struct Color {
 }
 ```
 
-Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`.
+Methods: `new(r, g, b)`, `from_hex(0xFF8800)`, `from_css_hex("#ff8800")` (also 3-digit: `"#FFF"`), `from_f32(r, g, b)`, `to_hex()`, `to_css_hex()`, `to_f32()`, `lerp(other, t)`, `luminance()`, `contrast_ratio(other)`. Implements `Display` (CSS hex), `Default` (black), `Ord` (lexicographic r,g,b), `FromStr` (`"#ff8800".parse()`), `From<u32>`, `From<[u8; 3]>`, and `From<(u8, u8, u8)>`. `from_css_hex` is `const fn`.
 
 ### Colormap sampling
 
@@ -165,7 +174,7 @@ let diverging: Vec<_> = all_colormaps()
     .collect();
 
 // Look up by name
-let viridis = find_by_name("viridis").unwrap();
+let viridis = find_by_name("viridis").expect("viridis should exist");
 
 // Filter by collection
 let crameri_maps = filter_by_collection("crameri");
@@ -184,7 +193,7 @@ for i in 0..SET2_PALETTE.len() {
 }
 
 // Also available via the registry
-let palette = prismatica::find_palette_by_name("Blues").unwrap();
+let palette = prismatica::find_palette_by_name("Blues").expect("Blues should exist");
 ```
 
 ### Feature flags
@@ -352,7 +361,7 @@ To add a new collection:
 cargo test                                         # All tests (unit + integration)
 cargo test --all-features                          # With all collections enabled
 cargo check --no-default-features --features core  # Verify no_std compatibility
-cargo clippy -- -W clippy::all                     # Lint
+cargo clippy --all-targets --all-features -- -D warnings  # Lint
 cargo test --test property --features all          # Property-based tests (proptest)
 cargo test --test snapshots --features all         # Snapshot tests (insta)
 ```
@@ -365,6 +374,8 @@ Snapshot tests use [insta](https://insta.rs/) to detect codegen changes. After m
 #![no_std]
 #![forbid(unsafe_code)]
 #![deny(clippy::unwrap_used)]
+#![warn(missing_docs)]
+#![warn(unreachable_pub)]
 ```
 
 ---

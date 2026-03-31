@@ -84,6 +84,30 @@ mod matplotlib_tests {
     }
 }
 
+#[cfg(feature = "matplotlib")]
+mod eval_rational_edge_cases {
+    #[test]
+    fn eval_rational_n_zero() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // n=0 is documented to return eval(0.0)
+        assert_eq!(cm.eval_rational(0, 0), cm.eval(0.0));
+    }
+
+    #[test]
+    fn eval_rational_n_one() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // n=1 is documented to return eval(0.0)
+        assert_eq!(cm.eval_rational(0, 1), cm.eval(0.0));
+    }
+
+    #[test]
+    fn eval_rational_i_exceeds_n_when_n_one() {
+        let cm = &prismatica::matplotlib::VIRIDIS;
+        // When n<=1, i is ignored and eval(0.0) is returned
+        assert_eq!(cm.eval_rational(5, 1), cm.eval(0.0));
+    }
+}
+
 #[cfg(feature = "crameri")]
 mod crameri_tests {
     use super::*;
@@ -464,6 +488,58 @@ mod registry_tests {
             assert_eq!(cm.meta.collection, "crameri");
         }
     }
+}
+
+#[cfg(feature = "colorbrewer")]
+#[test]
+fn discrete_palette_wrapping_at_multiples() {
+    let p = prismatica::colorbrewer::SET2_PALETTE;
+    let n = p.len();
+    for i in 0..n {
+        assert_eq!(p.get(i), p.get(i + n));
+        assert_eq!(p.get(i), p.get(i + 2 * n));
+        assert_eq!(p.get(i), p.get(i + 3 * n));
+    }
+}
+
+#[cfg(feature = "ratatui-integration")]
+#[test]
+fn ratatui_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = ratatui::style::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "crossterm-integration")]
+#[test]
+fn crossterm_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = crossterm::style::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "colored-integration")]
+#[test]
+fn colored_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = colored::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "comfy-table-integration")]
+#[test]
+fn comfy_table_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = comfy_table::Color::Red;
+    assert!(Color::try_from(named).is_err());
+}
+
+#[cfg(feature = "cursive-integration")]
+#[test]
+fn cursive_tryfrom_rejects_named_color() {
+    use prismatica::Color;
+    let named = cursive_core::theme::Color::Dark(cursive_core::theme::BaseColor::Red);
+    assert!(Color::try_from(named).is_err());
 }
 
 #[cfg(all(feature = "all", feature = "std"))]

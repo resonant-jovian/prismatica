@@ -1,12 +1,18 @@
 /// An sRGB color with 8-bit channels.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+///
+/// Ordering is lexicographic by `(r, g, b)` -- red-major.
+#[must_use]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
 )]
 pub struct Color {
+    /// Red channel (0-255).
     pub r: u8,
+    /// Green channel (0-255).
     pub g: u8,
+    /// Blue channel (0-255).
     pub b: u8,
 }
 
@@ -33,6 +39,8 @@ impl Color {
 
     /// Create a color from a 24-bit hex value (e.g., `0xFF8800`).
     ///
+    /// Only the lower 24 bits are used; higher bits are ignored.
+    ///
     /// # Examples
     ///
     /// ```
@@ -58,6 +66,7 @@ impl Color {
     /// assert_eq!(c.to_hex(), 0xFF8800);
     /// assert_eq!(Color::from_hex(c.to_hex()), c);
     /// ```
+    #[must_use]
     pub const fn to_hex(self) -> u32 {
         (self.r as u32) << 16 | (self.g as u32) << 8 | self.b as u32
     }
@@ -71,9 +80,72 @@ impl Color {
     /// let c = Color::new(255, 136, 0);
     /// assert_eq!(c.to_css_hex(), "#ff8800");
     /// ```
+    #[must_use]
     #[cfg(any(feature = "alloc", feature = "std"))]
+    #[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
     pub fn to_css_hex(self) -> alloc::string::String {
         alloc::format!("#{:02x}{:02x}{:02x}", self.r, self.g, self.b)
+    }
+
+    /// Parse a CSS hex color string.
+    ///
+    /// Accepts 6-digit (`"#ff8800"`, `"ff8800"`) and 3-digit shorthand
+    /// (`"#FFF"`, `"FFF"`) formats. The 3-digit form expands each digit
+    /// (e.g., `#ABC` becomes `#AABBCC`).
+    ///
+    /// Returns `None` if the string is not a valid hex color.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// assert_eq!(Color::from_css_hex("#ff8800"), Some(Color::new(255, 136, 0)));
+    /// assert_eq!(Color::from_css_hex("ff8800"), Some(Color::new(255, 136, 0)));
+    /// assert_eq!(Color::from_css_hex("#FFF"), Some(Color::new(255, 255, 255)));
+    /// assert_eq!(Color::from_css_hex("invalid"), None);
+    /// ```
+    pub const fn from_css_hex(s: &str) -> Option<Self> {
+        let bytes = s.as_bytes();
+
+        let (start, hex_len) = if !bytes.is_empty() && bytes[0] == b'#' {
+            (1, bytes.len() - 1)
+        } else {
+            (0, bytes.len())
+        };
+
+        match hex_len {
+            6 => {
+                let (r_hi, r_lo) = (hex_digit(bytes[start]), hex_digit(bytes[start + 1]));
+                let (g_hi, g_lo) = (hex_digit(bytes[start + 2]), hex_digit(bytes[start + 3]));
+                let (b_hi, b_lo) = (hex_digit(bytes[start + 4]), hex_digit(bytes[start + 5]));
+
+                match (r_hi, r_lo, g_hi, g_lo, b_hi, b_lo) {
+                    (Some(rh), Some(rl), Some(gh), Some(gl), Some(bh), Some(bl)) => Some(Color {
+                        r: rh << 4 | rl,
+                        g: gh << 4 | gl,
+                        b: bh << 4 | bl,
+                    }),
+                    _ => None,
+                }
+            }
+            3 => {
+                let (r, g, b) = (
+                    hex_digit(bytes[start]),
+                    hex_digit(bytes[start + 1]),
+                    hex_digit(bytes[start + 2]),
+                );
+
+                match (r, g, b) {
+                    (Some(r), Some(g), Some(b)) => Some(Color {
+                        r: r << 4 | r,
+                        g: g << 4 | g,
+                        b: b << 4 | b,
+                    }),
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
     }
 
     /// Convert to floating-point RGB in `[0.0, 1.0]`.
@@ -86,12 +158,33 @@ impl Color {
     /// assert!((r - 1.0).abs() < 0.01);
     /// assert!(g < 0.01);
     /// ```
+    #[must_use]
     pub const fn to_f32(self) -> (f32, f32, f32) {
         (
             self.r as f32 / 255.0,
             self.g as f32 / 255.0,
             self.b as f32 / 255.0,
         )
+    }
+
+    /// Create a color from floating-point RGB in `[0.0, 1.0]`.
+    ///
+    /// Values outside `[0.0, 1.0]` are clamped. NaN produces 0 for the
+    /// affected channel. This is the inverse of [`to_f32`](Self::to_f32).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::Color;
+    /// let c = Color::from_f32(1.0, 0.5, 0.0);
+    /// assert_eq!(c, Color::new(255, 128, 0));
+    /// ```
+    pub fn from_f32(r: f32, g: f32, b: f32) -> Self {
+        Self {
+            r: (r.clamp(0.0, 1.0) * 255.0 + 0.5) as u8,
+            g: (g.clamp(0.0, 1.0) * 255.0 + 0.5) as u8,
+            b: (b.clamp(0.0, 1.0) * 255.0 + 0.5) as u8,
+        }
     }
 
     /// Relative luminance per WCAG 2.0.
@@ -105,6 +198,7 @@ impl Color {
     /// let white = Color::new(255, 255, 255);
     /// assert!((white.luminance() - 1.0).abs() < 0.01);
     /// ```
+    #[must_use]
     pub fn luminance(self) -> f64 {
         let r = srgb_to_linear(self.r as f64 / 255.0);
         let g = srgb_to_linear(self.g as f64 / 255.0);
@@ -124,6 +218,7 @@ impl Color {
     /// let ratio = Color::new(0, 0, 0).contrast_ratio(Color::new(255, 255, 255));
     /// assert!((ratio - 21.0).abs() < 0.1);
     /// ```
+    #[must_use]
     pub fn contrast_ratio(self, other: Color) -> f64 {
         let l1 = self.luminance();
         let l2 = other.luminance();
@@ -156,6 +251,46 @@ impl Color {
     }
 }
 
+impl Default for Color {
+    /// Returns black (`Color::new(0, 0, 0)`).
+    fn default() -> Self {
+        Self::new(0, 0, 0)
+    }
+}
+
+impl From<u32> for Color {
+    /// Construct a Color from a 24-bit hex value (0xRRGGBB).
+    ///
+    /// Only the lower 24 bits are used; upper bits are silently ignored.
+    fn from(hex: u32) -> Self {
+        Self::from_hex(hex)
+    }
+}
+
+impl From<[u8; 3]> for Color {
+    fn from([r, g, b]: [u8; 3]) -> Self {
+        Self::new(r, g, b)
+    }
+}
+
+impl From<Color> for [u8; 3] {
+    fn from(c: Color) -> Self {
+        [c.r, c.g, c.b]
+    }
+}
+
+impl From<(u8, u8, u8)> for Color {
+    fn from((r, g, b): (u8, u8, u8)) -> Self {
+        Self::new(r, g, b)
+    }
+}
+
+impl From<Color> for (u8, u8, u8) {
+    fn from(c: Color) -> Self {
+        (c.r, c.g, c.b)
+    }
+}
+
 /// Error returned when a framework color cannot be converted to [`Color`].
 ///
 /// This occurs when converting from enum-based color types (e.g.,
@@ -173,7 +308,8 @@ impl Color {
 /// let named = ratatui::style::Color::Red;
 /// assert!(Color::try_from(named).is_err());
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct ConversionError {
     /// Description of why the conversion failed.
     pub message: &'static str,
@@ -187,6 +323,48 @@ impl core::fmt::Display for ConversionError {
 
 impl core::error::Error for ConversionError {}
 
+/// Error returned when parsing a [`Color`] from a string fails.
+///
+/// Returned by `"#xyz".parse::<Color>()` when the input is not a valid
+/// 3-digit or 6-digit CSS hex color.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParseColorError;
+
+impl core::fmt::Display for ParseColorError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.write_str("invalid CSS hex color (expected #RGB, RGB, #RRGGBB, or RRGGBB)")
+    }
+}
+
+impl core::error::Error for ParseColorError {}
+
+/// Parse a CSS hex color string like `"#ff8800"`, `"ff8800"`, `"#FFF"`, or `"FFF"`.
+///
+/// # Examples
+///
+/// ```
+/// use prismatica::Color;
+///
+/// let c: Color = "#ff8800".parse().unwrap();
+/// assert_eq!(c, Color::from_hex(0xFF8800));
+/// ```
+impl core::str::FromStr for Color {
+    type Err = ParseColorError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Self::from_css_hex(s).ok_or(ParseColorError)
+    }
+}
+
+const fn hex_digit(b: u8) -> Option<u8> {
+    match b {
+        b'0'..=b'9' => Some(b - b'0'),
+        b'a'..=b'f' => Some(b - b'a' + 10),
+        b'A'..=b'F' => Some(b - b'A' + 10),
+        _ => None,
+    }
+}
+
 fn srgb_to_linear(c: f64) -> f64 {
     if c <= 0.03928 {
         c / 12.92
@@ -197,6 +375,7 @@ fn srgb_to_linear(c: f64) -> f64 {
 
 /// The type/class of a colormap, following standard scientific nomenclature.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
@@ -227,7 +406,8 @@ impl core::fmt::Display for ColormapKind {
 }
 
 /// Metadata about a colormap's scientific properties.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 #[cfg_attr(
     feature = "serde-support",
     derive(serde::Serialize, serde::Deserialize)
@@ -259,8 +439,10 @@ pub struct ColormapMeta {
 /// This is the primary type for scientific colormaps. It stores N
 /// (typically 256) evenly-spaced RGB samples and interpolates between
 /// them for arbitrary input values.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub struct Colormap {
+    /// Metadata about this colormap (name, collection, kind, etc.).
     pub meta: ColormapMeta,
     /// The lookup table. Always `&'static` because it's compiled in.
     pub lut: &'static [[u8; 3]],
@@ -305,6 +487,7 @@ impl Colormap {
     /// Sample at a rational index: the `i`-th of `n` evenly-spaced values.
     ///
     /// Equivalent to `eval(i as f32 / (n - 1) as f32)` for `n > 1`.
+    /// When `n <= 1`, returns `eval(0.0)` for any `i`.
     ///
     /// # Examples
     ///
@@ -329,6 +512,7 @@ impl Colormap {
     /// let rev = BATLOW.reversed();
     /// assert_eq!(rev.eval(0.0), BATLOW.eval(1.0));
     /// ```
+    #[must_use]
     pub fn reversed(&self) -> ReversedColormap<'_> {
         ReversedColormap { inner: self }
     }
@@ -342,26 +526,68 @@ impl Colormap {
     /// let palette = BATLOW.colors(5);
     /// assert_eq!(palette.len(), 5);
     /// ```
+    #[must_use]
     #[cfg(any(feature = "alloc", feature = "std"))]
+    #[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
     pub fn colors(&self, n: usize) -> alloc::vec::Vec<Color> {
         (0..n).map(|i| self.eval_rational(i, n)).collect()
     }
 
-    /// Return the raw LUT as a slice of `[r, g, b]` arrays.
+    /// The colormap's canonical name.
     ///
     /// # Examples
     ///
     /// ```
     /// use prismatica::crameri::BATLOW;
-    /// assert_eq!(BATLOW.lut_raw().len(), 256);
+    /// assert_eq!(BATLOW.name(), "batlow");
     /// ```
-    pub fn lut_raw(&self) -> &'static [[u8; 3]] {
-        self.lut
+    #[must_use]
+    pub fn name(&self) -> &'static str {
+        self.meta.name
+    }
+
+    /// The colormap's classification.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// use prismatica::ColormapKind;
+    /// assert_eq!(BATLOW.kind(), ColormapKind::Sequential);
+    /// ```
+    #[must_use]
+    pub fn kind(&self) -> ColormapKind {
+        self.meta.kind
+    }
+
+    /// The collection this colormap belongs to.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// assert_eq!(BATLOW.collection(), "crameri");
+    /// ```
+    #[must_use]
+    pub fn collection(&self) -> &'static str {
+        self.meta.collection
+    }
+}
+
+impl core::fmt::Display for ColormapMeta {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{} ({}, {})", self.name, self.kind, self.collection)
+    }
+}
+
+impl core::fmt::Display for Colormap {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        core::fmt::Display::fmt(&self.meta, f)
     }
 }
 
 /// A reversed view of a colormap. Zero allocation.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ReversedColormap<'a> {
     inner: &'a Colormap,
 }
@@ -379,24 +605,132 @@ impl ReversedColormap<'_> {
     pub fn eval(&self, t: f32) -> Color {
         self.inner.eval(1.0 - t)
     }
+
+    /// Sample the reversed colormap at rational index `i` of `n`.
+    ///
+    /// When `n <= 1`, returns `eval(0.0)` for any `i`.
+    /// When `i >= n`, the index is clamped via saturating arithmetic.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let rev = BATLOW.reversed();
+    /// assert_eq!(rev.eval_rational(0, 3), BATLOW.eval_rational(2, 3));
+    /// ```
+    pub fn eval_rational(&self, i: usize, n: usize) -> Color {
+        if n <= 1 {
+            return self.eval(0.0);
+        }
+        let reversed_i = (n - 1).saturating_sub(i);
+        self.inner.eval_rational(reversed_i, n)
+    }
+
+    /// Extract `n` evenly-spaced discrete colors from the reversed colormap.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let rev = BATLOW.reversed();
+    /// let colors = rev.colors(5);
+    /// assert_eq!(colors.len(), 5);
+    /// ```
+    #[must_use]
+    #[cfg(any(feature = "alloc", feature = "std"))]
+    #[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
+    pub fn colors(&self, n: usize) -> alloc::vec::Vec<Color> {
+        (0..n).map(|i| self.eval_rational(i, n)).collect()
+    }
+
+    /// Access the metadata of the underlying colormap.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// let rev = BATLOW.reversed();
+    /// assert_eq!(rev.meta().name, "batlow");
+    /// ```
+    #[must_use]
+    pub fn meta(&self) -> &ColormapMeta {
+        &self.inner.meta
+    }
+
+    /// The colormap's canonical name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// assert_eq!(BATLOW.reversed().name(), "batlow");
+    /// ```
+    #[must_use]
+    pub fn name(&self) -> &'static str {
+        self.inner.meta.name
+    }
+
+    /// The colormap's classification.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// use prismatica::ColormapKind;
+    /// assert_eq!(BATLOW.reversed().kind(), ColormapKind::Sequential);
+    /// ```
+    #[must_use]
+    pub fn kind(&self) -> ColormapKind {
+        self.inner.meta.kind
+    }
+
+    /// The collection this colormap belongs to.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use prismatica::crameri::BATLOW;
+    /// assert_eq!(BATLOW.reversed().collection(), "crameri");
+    /// ```
+    #[must_use]
+    pub fn collection(&self) -> &'static str {
+        self.inner.meta.collection
+    }
+}
+
+impl core::fmt::Display for ReversedColormap<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{} reversed ({}, {})",
+            self.inner.meta.name, self.inner.meta.kind, self.inner.meta.collection
+        )
+    }
 }
 
 /// A discrete palette of distinct colors for categorical data.
 ///
 /// Unlike [`Colormap`], a `DiscretePalette` has a fixed set of colors
 /// and does not interpolate between them.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub struct DiscretePalette {
+    /// Metadata about this palette (name, collection, kind, etc.).
     pub meta: ColormapMeta,
+    /// The palette colors as `[r, g, b]` arrays.
     pub colors: &'static [[u8; 3]],
 }
 
 impl DiscretePalette {
     /// Get the `i`-th color (wraps around if `i >= len()`).
     ///
+    /// # Panics
+    ///
+    /// Panics if the palette is empty.
+    ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use prismatica::colorbrewer::SET2_PALETTE;
     /// let first = SET2_PALETTE.get(0);
     /// // Wraps around: index 8 == index 0 for an 8-color palette
@@ -411,10 +745,11 @@ impl DiscretePalette {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use prismatica::colorbrewer::SET2_PALETTE;
     /// assert!(SET2_PALETTE.len() > 0);
     /// ```
+    #[must_use]
     pub fn len(&self) -> usize {
         self.colors.len()
     }
@@ -423,10 +758,11 @@ impl DiscretePalette {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use prismatica::colorbrewer::SET2_PALETTE;
     /// assert!(!SET2_PALETTE.is_empty());
     /// ```
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.colors.is_empty()
     }
@@ -435,17 +771,100 @@ impl DiscretePalette {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```ignore
     /// use prismatica::colorbrewer::SET2_PALETTE;
     /// let colors = SET2_PALETTE.all_colors();
     /// assert_eq!(colors.len(), SET2_PALETTE.len());
     /// ```
+    #[must_use]
     #[cfg(any(feature = "alloc", feature = "std"))]
+    #[cfg_attr(docsrs, doc(cfg(any(feature = "alloc", feature = "std"))))]
     pub fn all_colors(&self) -> alloc::vec::Vec<Color> {
         self.colors
             .iter()
             .map(|[r, g, b]| Color::new(*r, *g, *b))
             .collect()
+    }
+
+    /// Iterate over the palette colors without allocation.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// for color in SET2_PALETTE.iter() {
+    ///     assert!(color.r <= 255);
+    /// }
+    /// ```
+    pub fn iter(&self) -> impl ExactSizeIterator<Item = Color> + DoubleEndedIterator + '_ {
+        self.colors.iter().map(|&[r, g, b]| Color::new(r, g, b))
+    }
+
+    /// The palette's canonical name.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// assert_eq!(SET2_PALETTE.name(), "Set2");
+    /// ```
+    #[must_use]
+    pub fn name(&self) -> &'static str {
+        self.meta.name
+    }
+
+    /// The palette's classification.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// use prismatica::ColormapKind;
+    /// assert_eq!(SET2_PALETTE.kind(), ColormapKind::Qualitative);
+    /// ```
+    #[must_use]
+    pub fn kind(&self) -> ColormapKind {
+        self.meta.kind
+    }
+
+    /// The collection this palette belongs to.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// use prismatica::colorbrewer::SET2_PALETTE;
+    /// assert_eq!(SET2_PALETTE.collection(), "colorbrewer");
+    /// ```
+    #[must_use]
+    pub fn collection(&self) -> &'static str {
+        self.meta.collection
+    }
+}
+
+impl core::fmt::Display for DiscretePalette {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{} ({} colors, {})",
+            self.meta.name,
+            self.colors.len(),
+            self.meta.collection
+        )
+    }
+}
+
+fn array_to_color(rgb: &[u8; 3]) -> Color {
+    Color::new(rgb[0], rgb[1], rgb[2])
+}
+
+impl<'a> IntoIterator for &'a DiscretePalette {
+    type Item = Color;
+    type IntoIter = core::iter::Map<core::slice::Iter<'a, [u8; 3]>, fn(&[u8; 3]) -> Color>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.colors
+            .iter()
+            .map(array_to_color as fn(&[u8; 3]) -> Color)
     }
 }
 
@@ -565,9 +984,9 @@ mod tests {
     }
 
     #[test]
-    fn colormap_lut_raw() {
+    fn colormap_lut_access() {
         let cm = test_colormap();
-        assert_eq!(cm.lut_raw().len(), 3);
+        assert_eq!(cm.lut.len(), 3);
     }
 
     static TEST_PALETTE_COLORS: [[u8; 3]; 3] = [[255, 0, 0], [0, 255, 0], [0, 0, 255]];
@@ -651,5 +1070,136 @@ mod tests {
             (ab - ba).abs() < 0.001,
             "contrast ratio should be symmetric"
         );
+    }
+
+    #[test]
+    fn color_from_f32_basic() {
+        assert_eq!(Color::from_f32(1.0, 0.5, 0.0), Color::new(255, 128, 0));
+        assert_eq!(Color::from_f32(0.0, 0.0, 0.0), Color::new(0, 0, 0));
+        assert_eq!(Color::from_f32(1.0, 1.0, 1.0), Color::new(255, 255, 255));
+    }
+
+    #[test]
+    fn color_from_f32_clamps() {
+        assert_eq!(Color::from_f32(-0.5, 0.0, 2.0), Color::new(0, 0, 255));
+    }
+
+    #[test]
+    fn color_from_css_hex_valid() {
+        assert_eq!(
+            Color::from_css_hex("#ff8800"),
+            Some(Color::new(255, 136, 0))
+        );
+        assert_eq!(Color::from_css_hex("ff8800"), Some(Color::new(255, 136, 0)));
+        assert_eq!(Color::from_css_hex("#000000"), Some(Color::new(0, 0, 0)));
+        assert_eq!(
+            Color::from_css_hex("FFFFFF"),
+            Some(Color::new(255, 255, 255))
+        );
+    }
+
+    #[test]
+    fn color_from_css_hex_3digit() {
+        assert_eq!(Color::from_css_hex("#FFF"), Some(Color::new(255, 255, 255)));
+        assert_eq!(Color::from_css_hex("000"), Some(Color::new(0, 0, 0)));
+        assert_eq!(
+            Color::from_css_hex("#ABC"),
+            Some(Color::new(0xAA, 0xBB, 0xCC))
+        );
+    }
+
+    #[test]
+    fn color_from_css_hex_invalid() {
+        assert_eq!(Color::from_css_hex("#gg0000"), None);
+        assert_eq!(Color::from_css_hex(""), None);
+        assert_eq!(Color::from_css_hex("#1234567"), None);
+        assert_eq!(Color::from_css_hex("#zz"), None);
+    }
+
+    #[test]
+    fn color_from_u32() {
+        let c: Color = 0xFF8800u32.into();
+        assert_eq!(c, Color::new(255, 136, 0));
+    }
+
+    #[test]
+    fn color_from_str_valid() {
+        let c: Color = "#ff8800".parse().expect("valid hex");
+        assert_eq!(c, Color::new(255, 136, 0));
+
+        let c: Color = "FFF".parse().expect("valid 3-digit hex");
+        assert_eq!(c, Color::new(255, 255, 255));
+    }
+
+    #[test]
+    fn color_from_str_invalid() {
+        let err = "nope".parse::<Color>();
+        assert!(err.is_err());
+        assert_eq!(err.expect_err("should fail"), ParseColorError);
+    }
+
+    #[test]
+    fn colormap_display() {
+        let cm = test_colormap();
+        let s = format!("{cm}");
+        assert_eq!(s, "test (Sequential, test)");
+    }
+
+    #[test]
+    fn discrete_palette_display() {
+        let p = DiscretePalette {
+            meta: ColormapMeta {
+                name: "test",
+                collection: "test",
+                author: "test",
+                kind: ColormapKind::Qualitative,
+                perceptually_uniform: false,
+                cvd_friendly: false,
+                grayscale_safe: false,
+                lut_size: 3,
+                citation: "",
+            },
+            colors: &TEST_PALETTE_COLORS,
+        };
+        assert_eq!(format!("{p}"), "test (3 colors, test)");
+    }
+
+    #[test]
+    fn reversed_colormap_eval_rational() {
+        let cm = test_colormap();
+        let rev = cm.reversed();
+        assert_eq!(rev.eval_rational(0, 3), cm.eval_rational(2, 3));
+        assert_eq!(rev.eval_rational(2, 3), cm.eval_rational(0, 3));
+    }
+
+    #[test]
+    fn discrete_palette_iter() {
+        let p = DiscretePalette {
+            meta: ColormapMeta {
+                name: "test",
+                collection: "test",
+                author: "test",
+                kind: ColormapKind::Qualitative,
+                perceptually_uniform: false,
+                cvd_friendly: false,
+                grayscale_safe: false,
+                lut_size: 3,
+                citation: "",
+            },
+            colors: &TEST_PALETTE_COLORS,
+        };
+        let colors: alloc::vec::Vec<Color> = p.iter().collect();
+        assert_eq!(colors.len(), 3);
+        assert_eq!(colors[0], Color::new(255, 0, 0));
+        assert_eq!(colors[1], Color::new(0, 255, 0));
+        assert_eq!(colors[2], Color::new(0, 0, 255));
+    }
+
+    #[test]
+    fn colormap_convenience_accessors() {
+        let cm = test_colormap();
+        assert_eq!(cm.name(), "test");
+        assert_eq!(cm.kind(), ColormapKind::Sequential);
+        assert_eq!(cm.collection(), "test");
     }
 }
